@@ -1,0 +1,22 @@
+.center{
+    margin: auto;
+    width: 50%;
+    text-align: center;
+}
+
+.dashed{
+    border-style: dashed;
+}
+
+.justify{
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.background_aqua{
+    background-color: aqua;
+}
+
+.background_firebrick{
+    background-color: firebrick;
+}
