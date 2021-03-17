@@ -24,3 +24,7 @@
 .background_color{
     background-color: beige;
 }
+
+.uppercase{
+    text-transform: uppercase;
+}
