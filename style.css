@@ -28,3 +28,7 @@
 .uppercase{
     text-transform: uppercase;
 }
+
+.displayNone{
+    display: none;
+}
