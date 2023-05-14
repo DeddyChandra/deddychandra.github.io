@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Joss Paper Converter</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+          <label for="inputPassword" class="col-sm-3 col-form-label">Total Amount in Rupiah</label>
+          <div class="col-sm-7">
+            <input class="form-control" id="amount" type="number" placeholder="e.g 1000000" max="10000000">
+          </div>
+        </div>
+        <div class="row justify-content-md-center mt-2 mb-2"><h4>Insert amount or use quick selection</h4></div>
+        <div class="row justify-content-md-center mt-3 mb-2" id="choice">
+        </div>
+        <div class="container">
+            <div class="d-flex justify-content-center flex-wrap" id="joss">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+
+<script>
+    let amount = $("#amount");
+    let joss = $("#joss");
+    let choice = $("#choice")
+    const jossMoney = [
+        {amount: 1000 , img: "1k"}, 
+        {amount: 2000 ,img: "2k"},
+        {amount: 5000 ,img: "5k"},
+        {amount: 10000 ,img: "10k"},
+        {amount: 20000 ,img: "20k"},
+        {amount: 50000 ,img: "50k"},
+        {amount: 100000 ,img: "100k"},
+        {amount: 200000 ,img: "200k"},
+        {amount: 500000 ,img: "500k"},
+        {amount: 1000000 ,img: "1000k"}
+    ]
+    const button = [
+        {value: 1000, text:"Rp1.000"},
+        {value: 2000, text:"Rp2.000"},
+        {value: 3000, text:"Rp3.000"},
+        {value: 7000, text:"Rp7.000"},
+        {value: 15000, text:"Rp15.000"},
+        {value: 26000, text:"Rp26.000"},
+        {value: 47000, text:"Rp47.000"},
+        {value: 79000, text:"Rp79.000"},
+        {value: 88000, text:"Rp88.000"},
+        {value: 888888, text:"Rp888.888"},
+    ]
+
+    button.forEach(element => {
+        let btn = $('<button>', {
+                class : "btn btn-outline-success m-auto amountBtn",
+                text:  element.text,
+                value: element.value
+            })    
+        choice.append(btn)
+        })
+
+    amount.on("keyup", () => {
+            clear()
+            converter(amount.val())
+        }
+    )
+
+    $(".amountBtn").each(function() {
+            $(this).on("click", function() {
+                let value = $(this).val();
+                clear()
+                converter(value)
+                amount.val("")
+            }); 
+    })
+    
+    function clear(){
+        joss.empty()
+    }
+
+    function converter(currentAmount){
+        if(currentAmount > 10000000){
+            return
+        }
+        let stack = insertToStack()
+        while(currentAmount >= 1000){
+            let peek = stack[stack.length-1]
+            if(currentAmount  >= peek.amount){
+                joss.prepend('<img src="images/joss/' + peek.img + '.jpg" alt="">')
+                currentAmount -= peek.amount
+            } else {
+                let popped = stack.pop()
+            }
+        }
+    }
+    
+    function insertToStack(){
+        let stack = [];
+        jossMoney.forEach(element => {
+            //console.log(element)
+            stack.push(element)
+        })
+        return stack
+    }
+
+</script>
