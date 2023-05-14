@@ -9,16 +9,17 @@
 </head>
 <body>
     <div class="container mt-5">
-        <div class="form-group row">
+        <div class="row">
           <label for="inputPassword" class="col-sm-3 col-form-label">Total Amount in Rupiah</label>
           <div class="col-sm-7">
-            <input class="form-control" id="amount" type="number" placeholder="e.g 1000000">
+            <input class="form-control" id="amount" type="number" placeholder="e.g 1000000" max="10000000">
           </div>
         </div>
+        <div class="row justify-content-md-center mt-2 mb-2"><h4>Insert amount or use quick selection</h4></div>
+        <div class="row justify-content-md-center mt-3 mb-2" id="choice">
+        </div>
         <div class="container">
-            <div class="d-flex justify-content-center" id="joss">
-                <!-- <img src="images/joss/1k.jpg" alt="">
-                <img src="images/joss/1k.jpg" alt=""> -->
+            <div class="d-flex justify-content-center flex-wrap" id="joss">
             </div>
         </div>
     </div>
@@ -32,20 +33,83 @@
 <script>
     let amount = $("#amount");
     let joss = $("#joss");
-    let jossMoney = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000]
+    let choice = $("#choice")
+    const jossMoney = [
+        {amount: 1000 , img: "1k"}, 
+        {amount: 2000 ,img: "2k"},
+        {amount: 5000 ,img: "5k"},
+        {amount: 10000 ,img: "10k"},
+        {amount: 20000 ,img: "20k"},
+        {amount: 50000 ,img: "50k"},
+        {amount: 100000 ,img: "100k"},
+        {amount: 200000 ,img: "200k"},
+        {amount: 500000 ,img: "500k"},
+        {amount: 1000000 ,img: "1000k"}
+    ]
+    const button = [
+        {value: 1000, text:"Rp1.000"},
+        {value: 2000, text:"Rp2.000"},
+        {value: 3000, text:"Rp3.000"},
+        {value: 7000, text:"Rp7.000"},
+        {value: 15000, text:"Rp15.000"},
+        {value: 26000, text:"Rp26.000"},
+        {value: 47000, text:"Rp47.000"},
+        {value: 79000, text:"Rp79.000"},
+        {value: 88000, text:"Rp88.000"},
+        {value: 888888, text:"Rp888.888"},
+    ]
+
+    button.forEach(element => {
+        let btn = $('<button>', {
+                class : "btn btn-outline-success m-auto amountBtn",
+                text:  element.text,
+                value: element.value
+            })    
+        choice.append(btn)
+        })
+
     amount.on("keyup", () => {
             clear()
-            converter()
+            converter(amount.val())
         }
     )
+
+    $(".amountBtn").each(function() {
+            $(this).on("click", function() {
+                let value = $(this).val();
+                clear()
+                converter(value)
+                amount.val("")
+            }); 
+    })
     
     function clear(){
         joss.empty()
     }
 
-    function converter(){
-        joss.prepend('<img src="images/joss/1k.jpg" alt="">')
+    function converter(currentAmount){
+        if(currentAmount > 10000000){
+            return
+        }
+        let stack = insertToStack()
+        while(currentAmount >= 1000){
+            let peek = stack[stack.length-1]
+            if(currentAmount  >= peek.amount){
+                joss.prepend('<img src="images/joss/' + peek.img + '.jpg" alt="">')
+                currentAmount -= peek.amount
+            } else {
+                let popped = stack.pop()
+            }
+        }
+    }
+    
+    function insertToStack(){
+        let stack = [];
+        jossMoney.forEach(element => {
+            //console.log(element)
+            stack.push(element)
+        })
+        return stack
     }
 
-    
 </script>
