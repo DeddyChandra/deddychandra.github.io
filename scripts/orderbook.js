@@ -91,8 +91,8 @@ document.addEventListener("DOMContentLoaded", function() {
         document.cookie = name + "=" + encodeURIComponent(value) + "; expires=" + expires + "; path=/";
     }
     function getCookie(name) {
-        return document.cookie.split("; ").reduce((r, v) => {
-            const parts = v.split("=");
+        return document.cookie.split('; ').reduce((r, v) => {
+            const parts = v.split('=');
             return parts[0] === name ? decodeURIComponent(parts[1]) : r
         }, "");
     }
@@ -309,6 +309,56 @@ document.addEventListener("DOMContentLoaded", function() {
                 offerFreq: clean(offer.que_num)
             });
         }
+    }
+
+    // Listen for changes in watchlist input and update cookie/buttons
+    const watchlistInput = document.getElementById('watchlistInput');
+    const watchlistBtnContainer = document.getElementById('watchlistBtnContainer');
+    const saveWatchlistBtn = document.getElementById('saveWatchlistBtn');
+
+    // Save watchlist to cookie and render buttons when Save is clicked
+    if (saveWatchlistBtn) {
+        saveWatchlistBtn.onclick = function() {
+            const arr = watchlistInput.value.split(',').map(s => s.trim()).filter(Boolean);
+            setCookie('watchlist', JSON.stringify(arr));
+            renderWatchlistButtons();
+        };
+    }
+
+    // On page load, restore watchlist value from cookie and render buttons
+    const watchlistCookie = getCookie('watchlist');
+    if (watchlistCookie && watchlistInput) {
+        try {
+            const arr = JSON.parse(watchlistCookie);
+            watchlistInput.value = Array.isArray(arr) ? arr.join(', ') : watchlistCookie;
+        } catch {
+            watchlistInput.value = watchlistCookie;
+        }
+    }
+    renderWatchlistButtons();
+
+    function renderWatchlistButtons() {
+        watchlistBtnContainer.innerHTML = '';
+        let stocks = [];
+        try {
+            const val = getCookie('watchlist');
+            stocks = JSON.parse(val);
+            if (!Array.isArray(stocks)) stocks = [val];
+        } catch {
+            const val = getCookie('watchlist');
+            stocks = val ? val.split(',').map(s => s.trim()).filter(Boolean) : [];
+        }
+        stocks.forEach(stock => {
+            if (!stock) return;
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-outline-info btn-sm';
+            btn.textContent = stock;
+            btn.onclick = function() {
+                document.getElementById('codeInput').value = stock;
+                document.getElementById('callApiBtn').click();
+            };
+            watchlistBtnContainer.appendChild(btn);
+        });
     }
 
     render();
