@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Sample data (Top levels of order book)
     // Left side = bid, right side = offer
     const rows = [];
-    const VISIBLE_ROWS = 5;
+    const VISIBLE_ROWS = 1;
 
     const fmt = new Intl.NumberFormat("en-US");
 
@@ -256,11 +256,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 let oqDataMap = {};
                 await Promise.all([
                     ...bidPrices.map(async (price) => {
-                        const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price, token });
+                        const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price, token, sortBy: 'SORT_BY_LOT', sortDirection: 'SORT_DIRECTION_DESC' });
                         oqDataMap['bid_' + price] = oqData && oqData.data && Array.isArray(oqData.data.orders) ? oqData.data.orders : [];
                     }),
                     ...offerPrices.map(async (price) => {
-                        const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.SELL, price, token });
+                        const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.SELL, price, token, sortBy: 'SORT_BY_LOT', sortDirection: 'SORT_DIRECTION_DESC' });
                         oqDataMap['offer_' + price] = oqData && oqData.data && Array.isArray(oqData.data.orders) ? oqData.data.orders : [];
                     })
                 ]);
@@ -332,6 +332,20 @@ document.addEventListener("DOMContentLoaded", function() {
     window.recalcBandarFreqAndRender = recalcBandarFreqAndRender;
     minBidBandarInput.addEventListener("input", recalcBandarFreqAndRender);
     minBidBandarInput.addEventListener("change", recalcBandarFreqAndRender);
+
+    // --- Minimum Stocksplit Cookie Logic ---
+    const minStocksplitInput = document.getElementById('minStocksplitInput');
+    if (minStocksplitInput) {
+        // Restore from cookie on load
+        const minStocksplitCookie = getCookie('min_stocksplit');
+        if (minStocksplitCookie) {
+            minStocksplitInput.value = minStocksplitCookie;
+        }
+        // Save to cookie on change
+        minStocksplitInput.addEventListener('input', function(e) {
+            setCookie('min_stocksplit', e.target.value);
+        });
+    }
 
     // Helper to update rows from API data, now with bandar freq calculation
     function updateRowsFromAPI(bidArr, offerArr, oqDataMap = {}, minBidBandar = null) {
@@ -429,8 +443,11 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     // Fetch order-queue API
-    async function getOrderQueue({ stockCode, actionType, price, token, limit = 1000 }) {
-        const url = `https://exodus.stockbit.com/order-trade/order-queue?stock_code=${encodeURIComponent(stockCode)}&action_type=${actionType}&board_type=BOARD_TYPE_REGULAR&order_status=ORDER_STATUS_OPEN&limit=${limit}&price=${encodeURIComponent(price)}&sort_by=SORT_BY_LOT&sort_direction=SORT_DIRECTION_DESC`;
+    async function getOrderQueue({ stockCode, actionType, price, token, limit = 1000, sortBy, sortDirection }) {
+        let url = `https://exodus.stockbit.com/order-trade/order-queue?stock_code=${encodeURIComponent(stockCode)}&action_type=${actionType}&board_type=BOARD_TYPE_REGULAR&order_status=ORDER_STATUS_OPEN&limit=${limit}&price=${encodeURIComponent(price)}`;
+        if (sortBy && sortDirection) {
+            url += `&sort_by=${encodeURIComponent(sortBy)}&sort_direction=${encodeURIComponent(sortDirection)}`;
+        }
         const headers = {
             "accept": "application/json",
             "accept-language": "en",

@@ -14,7 +14,7 @@
         }
 
         .card {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             background: #111a33;
             border: 1px solid rgba(255,255,255,0.08);
@@ -28,12 +28,6 @@
             font-size: 18px;
             font-weight: 700;
             letter-spacing: 0.2px;
-        }
-
-        .sub {
-            margin: 0 0 18px 0;
-            opacity: 0.85;
-            font-size: 13px;
         }
 
         table {
@@ -97,6 +91,14 @@
         }
         .info-bar .text-danger {
             color: #dc3545 !important;
+        }
+
+        /* Make Split Order columns wider for long values */
+        th.split-order, td.split-order {
+            min-width: 140px;
+            max-width: 260px;
+            white-space: pre-line;
+            word-break: break-all;
         }
     </style>
 </head>
@@ -234,7 +236,7 @@
             </td>
         </tr>
         <tr>
-            <th class="center">Split <br> Order</th>
+            <th class="center split-order">Split <br> Order</th>
             <th class="center">Bandar <br> Freq</th>
             <th class="center">Freq</th>
             <th class="center">Lot</th>
@@ -243,7 +245,7 @@
             <th class="center">Lot</th>
             <th class="center">Freq</th>
             <th class="center">Bandar <br> Freq</th>
-            <th class="center">Split <br> Order</th>
+            <th class="center split-order">Split <br> Order</th>
         </tr>
         </thead>
         <tbody id="orderbook-body">
@@ -267,6 +269,11 @@
       <label for="watchlistInput" class="form-label">Watchlist</label>
       <input type="text" class="form-control" id="watchlistInput" placeholder="e.g. coco, supa, bumi" style="background:#192040; color:#e8eefc; border:1px solid #2a3550;" />
       <button id="saveWatchlistBtn" class="btn btn-success btn-sm mt-1">Save</button>
+    </div>
+    <div class="mb-3">
+      <label for="minStocksplitInput" class="form-label">Minimum stocksplit</label>
+      <input type="number" class="form-control" id="minStocksplitInput" placeholder="e.g. 5" style="background:#192040; color:#e8eefc; border:1px solid #2a3550;" />
+      <div class="form-text text-light" style="opacity:0.7;">Minimum number of matching minutes and seconds</div>
     </div>
     <label class="form-label">Company-price-feed/v2/orderbook</label>
     <div id="company-price-feed-orderbook" style="background:#192040; color:#e8eefc; border-radius:8px; padding:10px; min-height:60px;"></div>
