@@ -3,36 +3,71 @@
 document.addEventListener("DOMContentLoaded", function() {
     // Sample data (Top levels of order book)
     // Left side = bid, right side = offer
-    const rows = [
-        { bidStockSplit: "1:2", bidFreq: 12, bidLot: 340, bid: 990, bidBandarFreq: 3, offer: 1000, offerStockSplit: "1:5", offerBandarFreq: 2, offerLot: 210, offerFreq: 9 },
-        { bidStockSplit: "1:2", bidFreq: 10, bidLot: 280, bid: 985, bidBandarFreq: 2, offer: 1005, offerStockSplit: "1:5", offerBandarFreq: 1, offerLot: 180, offerFreq: 7 },
-        { bidStockSplit: "1:2", bidFreq: 8,  bidLot: 190, bid: 980, bidBandarFreq: 1, offer: 1010, offerStockSplit: "1:5", offerBandarFreq: 2, offerLot: 150, offerFreq: 6 },
-        { bidStockSplit: "1:2", bidFreq: 6,  bidLot: 160, bid: 975, bidBandarFreq: 1, offer: 1015, offerStockSplit: "1:5", offerBandarFreq: 1, offerLot: 120, offerFreq: 5 },
-        { bidStockSplit: "1:2", bidFreq: 4,  bidLot: 120, bid: 970, bidBandarFreq: 0, offer: 1020, offerStockSplit: "1:5", offerBandarFreq: 0, offerLot: 100, offerFreq: 4 }
-    ];
+    const rows = [];
 
     const fmt = new Intl.NumberFormat("en-US");
+
+    let showAllRows = false;
 
     function render() {
         const tbody = document.getElementById("orderbook-body");
         tbody.innerHTML = "";
-
-        for (const r of rows) {
+        const displayRows = showAllRows ? rows : rows.slice(0, 10);
+        for (const r of displayRows) {
+            function show(val) {
+                return (val === '' || val === 0 || val === '0') ? '' : fmt.format(val);
+            }
             const tr = document.createElement("tr");
+            // Color logic for bid/offer price
+            let bidClass = '', offerClass = '';
+            let prevPrice = null;
+            if (typeof window.lastPrevPrice === 'number') {
+                prevPrice = window.lastPrevPrice;
+            }
+            if (prevPrice !== null) {
+                if (r.bid === '') bidClass = '';
+                else if (Number(r.bid) > prevPrice) bidClass = 'text-success';
+                else if (Number(r.bid) < prevPrice) bidClass = 'text-danger';
+                else bidClass = 'text-white';
+                if (r.offer === '') offerClass = '';
+                else if (Number(r.offer) > prevPrice) offerClass = 'text-success';
+                else if (Number(r.offer) < prevPrice) offerClass = 'text-danger';
+                else offerClass = 'text-white';
+            }
             tr.innerHTML = `
               <td class="center">${r.bidStockSplit}</td>
-              <td class="center">${fmt.format(r.bidBandarFreq)}</td>
-              <td class="center">${fmt.format(r.bidFreq)}</td>
-              <td class="center">${fmt.format(r.bidLot)}</td>
-              <td class="center split-left">${fmt.format(r.bid)}</td>
-              <td class="center split-mid">${fmt.format(r.offer)}</td>
-              <td class="center">${fmt.format(r.offerLot)}</td>
-              <td class="center">${fmt.format(r.offerFreq)}</td>
-              <td class="center">${fmt.format(r.offerBandarFreq)}</td>
+              <td class="center">${show(r.bidBandarFreq)}</td>
+              <td class="center">${show(r.bidFreq)}</td>
+              <td class="center">${show(r.bidLot)}</td>
+              <td class="center split-left ${bidClass}">${show(r.bid)}</td>
+              <td class="center split-mid ${offerClass}">${show(r.offer)}</td>
+              <td class="center">${show(r.offerLot)}</td>
+              <td class="center">${show(r.offerFreq)}</td>
+              <td class="center">${show(r.offerBandarFreq)}</td>
               <td class="center">${r.offerStockSplit}</td>
             `;
             tbody.appendChild(tr);
         }
+        // Add show/collapse button
+        let btn = document.getElementById('toggleRowsBtn');
+        if (!btn) {
+            btn = document.createElement('button');
+            btn.id = 'toggleRowsBtn';
+            btn.className = 'btn btn-outline-light btn-sm w-100 mt-2';
+            btn.style.fontSize = '13px';
+            btn.style.fontWeight = '500';
+            btn.style.letterSpacing = '0.5px';
+            btn.style.borderRadius = '8px';
+            btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+            btn.style.margin = '0 auto';
+            tbody.parentElement.parentElement.appendChild(btn);
+        }
+        btn.textContent = showAllRows ? 'Collapse' : 'Show All';
+        btn.onclick = function() {
+            showAllRows = !showAllRows;
+            render();
+        };
+        btn.style.display = rows.length > 10 ? 'block' : 'none';
     }
 
     function formatWithDot(num) {
@@ -191,12 +226,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 orderBookCode.textContent = code;
                 // Update info bar with API data
                 const d = data.data;
+                // In API response handler, set window.lastPrevPrice BEFORE updateRowsFromAPI and render
+                window.lastPrevPrice = typeof d.previous === 'number' ? d.previous : null;
+                // Update rows from API and render
+                updateRowsFromAPI(d.bid || [], d.offer || []);
+                // Force a second render to ensure color logic applies after lastPrevPrice is set
+                render();
                 // Helper for formatting
                 function fmtNum(val, digits = 2) {
-                    if (val == null) return "-";
-                    if (Math.abs(val) >= 1e9) return (val/1e9).toFixed(digits) + " B";
-                    if (Math.abs(val) >= 1e6) return (val/1e6).toFixed(digits) + " M";
-                    if (Math.abs(val) >= 1e3) return (val/1e3).toFixed(digits) + " K";
+                    if (val == null || val === '') return "-";
                     return val.toString();
                 }
                 function fmtVolume(val) {
@@ -207,9 +245,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (Math.abs(val) >= 1e3) return (val/1e3).toFixed(2) + " K";
                     return val.toString();
                 }
-                function set(id, val, digits) {
+                function set(id, val) {
                     const el = document.getElementById(id);
-                    if (el) el.textContent = fmtNum(val, digits);
+                    if (el) el.textContent = fmtNum(val);
                 }
                 set("infoOpen", d.open);
                 set("infoPrev", d.previous);
@@ -238,11 +276,39 @@ document.addEventListener("DOMContentLoaded", function() {
                 setColor("infoHigh", d.high, d.previous);
                 setColor("infoLow", d.low, d.previous);
                 setColor("infoAvg", d.average, d.previous);
+
+                // In API response handler, set window.lastPrevPrice
+                window.lastPrevPrice = typeof d.previous === 'number' ? d.previous : null;
             } catch (err) {
                 if (apiResult) apiResult.textContent = "Request failed: " + err;
                 orderBookCode.textContent = "Incorrect error Stock code";
             }
         });
+    }
+
+    // Helper to update rows from API data
+    function updateRowsFromAPI(bidArr, offerArr) {
+        const maxLen = Math.max(bidArr.length, offerArr.length, 5);
+        rows.length = 0;
+        for (let i = 0; i < maxLen; i++) {
+            const bid = bidArr[i] || {};
+            const offer = offerArr[i] || {};
+            function clean(val) {
+                return (val === undefined || val === null || isNaN(val) || val === 0) ? '' : val;
+            }
+            rows.push({
+                bidStockSplit: clean(bid.stocksplit),
+                bidFreq: clean(bid.que_num),
+                bidLot: clean(bid.volume) ? Math.round(bid.volume / 100) : '',
+                bid: clean(bid.price),
+                bidBandarFreq: clean(bid.bandar_freq),
+                offer: clean(offer.price),
+                offerStockSplit: clean(offer.stocksplit),
+                offerBandarFreq: clean(offer.bandar_freq),
+                offerLot: clean(offer.volume) ? Math.round(offer.volume / 100) : '',
+                offerFreq: clean(offer.que_num)
+            });
+        }
     }
 
     render();
