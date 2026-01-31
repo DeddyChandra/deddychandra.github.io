@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", function() {
     // Sample data (Top levels of order book)
     // Left side = bid, right side = offer
     const rows = [];
-    const VISIBLE_ROWS = 1;
-    const ORDER_QUEUE_LIMIT = 300;
+    const VISIBLE_ROWS = 3
+    const ORDER_QUEUE_LIMIT = 300
 
     const fmt = new Intl.NumberFormat("en-US");
 
@@ -251,17 +251,50 @@ document.addEventListener("DOMContentLoaded", function() {
                 const d = data.data;
                 window.lastPrevPrice = typeof d.previous === 'number' ? d.previous : null;
                 // 2. Call order-queue API for top 5 bid and offer prices
-                let bidPrices = (d.bid || []).slice(0, VISIBLE_ROWS).map(b => b.price).filter(p => p !== undefined && p !== null && !isNaN(p));
-                let offerPrices = (d.offer || []).slice(0, VISIBLE_ROWS).map(o => o.price).filter(p => p !== undefined && p !== null && !isNaN(p));
+                let bidArr = d.bid || [];
+                let offerArr = d.offer || [];
+                let bidPrices = bidArr.slice(0, VISIBLE_ROWS).map(b => b.price).filter(p => p !== undefined && p !== null && !isNaN(p));
+                let offerPrices = offerArr.slice(0, VISIBLE_ROWS).map(o => o.price).filter(p => p !== undefined && p !== null && !isNaN(p));
                 let oqDataMap = {};
+                // Helper to get que_num for a price
+                function getQueNum(arr, price) {
+                    let found = arr.find(x => x.price === price);
+                    return found && typeof isNaN(found.que_num) ? found.que_num : 0;
+                }
+                // Fetch order-queue for each price, optimized
                 await Promise.all([
                     ...bidPrices.map(async (price) => {
-                        const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price, token, sortBy: 'SORT_BY_LOT', sortDirection: 'SORT_DIRECTION_DESC' });
-                        oqDataMap['bid_' + price] = oqData && oqData.data && Array.isArray(oqData.data.orders) ? oqData.data.orders : [];
+                        const queNum = getQueNum(bidArr, price);
+                        console.log(queNum);
+                        if (queNum <= ORDER_QUEUE_LIMIT) {
+                            // Only one call, no sort
+                            const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price, token });
+                            oqDataMap['bid_' + price] = oqData && oqData.data && Array.isArray(oqData.data.orders) ? oqData.data.orders : [];
+                            oqDataMap['bid_' + price + '_sorted'] = oqDataMap['bid_' + price]; // Use same for both
+                        } else {
+                            // Two calls: one with sort for bandar freq, one without for split order
+                            const [oqDataUnsorted, oqDataSorted] = await Promise.all([
+                                getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price, token }),
+                                getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price, token, sortBy: 'SORT_BY_LOT', sortDirection: 'SORT_DIRECTION_DESC' })
+                            ]);
+                            oqDataMap['bid_' + price] = oqDataUnsorted && oqDataUnsorted.data && Array.isArray(oqDataUnsorted.data.orders) ? oqDataUnsorted.data.orders : [];
+                            oqDataMap['bid_' + price + '_sorted'] = oqDataSorted && oqDataSorted.data && Array.isArray(oqDataSorted.data.orders) ? oqDataSorted.data.orders : [];
+                        }
                     }),
                     ...offerPrices.map(async (price) => {
-                        const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.SELL, price, token, sortBy: 'SORT_BY_LOT', sortDirection: 'SORT_DIRECTION_DESC' });
-                        oqDataMap['offer_' + price] = oqData && oqData.data && Array.isArray(oqData.data.orders) ? oqData.data.orders : [];
+                        const queNum = getQueNum(offerArr, price);
+                        if (queNum <= ORDER_QUEUE_LIMIT) {
+                            const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.SELL, price, token });
+                            oqDataMap['offer_' + price] = oqData && oqData.data && Array.isArray(oqData.data.orders) ? oqData.data.orders : [];
+                            oqDataMap['offer_' + price + '_sorted'] = oqDataMap['offer_' + price];
+                        } else {
+                            const [oqDataUnsorted, oqDataSorted] = await Promise.all([
+                                getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.SELL, price, token }),
+                                getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.SELL, price, token, sortBy: 'SORT_BY_LOT', sortDirection: 'SORT_DIRECTION_DESC' })
+                            ]);
+                            oqDataMap['offer_' + price] = oqDataUnsorted && oqDataUnsorted.data && Array.isArray(oqDataUnsorted.data.orders) ? oqDataUnsorted.data.orders : [];
+                            oqDataMap['offer_' + price + '_sorted'] = oqDataSorted && oqDataSorted.data && Array.isArray(oqDataSorted.data.orders) ? oqDataSorted.data.orders : [];
+                        }
                     })
                 ]);
                 window.lastOrderQueueDataMap = oqDataMap;
@@ -274,7 +307,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 const minBidBandarVal = parseInt(minBidBandarInput.value.replace(/\D/g, ""), 10);
                 const minBidBandar = isNaN(minBidBandarVal) ? null : minBidBandarVal;
-                updateRowsFromAPI(d.bid || [], d.offer || [], oqDataMap, minBidBandar);
+                updateRowsFromAPI(bidArr, offerArr, oqDataMap, minBidBandar);
                 render();
                 set("infoOpen", d.open);
                 set("infoPrev", d.previous);
@@ -425,8 +458,12 @@ document.addEventListener("DOMContentLoaded", function() {
             const bidPrice = rowData.bid;
             const offerPrice = rowData.offer;
             // Bid split order
-            const bidOrders = oqDataMap['bid_' + bidPrice] || [];
-            const bidLines = calcSplitOrderFromCache(bidOrders, minStocksplit);
+            let bidOrdersForSplit = [];
+            if (bidPrice !== undefined && bidPrice !== null && !isNaN(bidPrice)) {
+                const key = (typeof rowData.bidFreq === 'number' && rowData.bidFreq > ORDER_QUEUE_LIMIT) ? 'bid_' + bidPrice : 'bid_' + bidPrice;
+                bidOrdersForSplit = oqDataMap[key] || [];
+            }
+            const bidLines = calcSplitOrderFromCache(bidOrdersForSplit, minStocksplit);
             const td = tr.querySelector('td.split-order');
             if (td) {
                 let content = rowData.bidStockSplit || '';
@@ -439,8 +476,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 td.innerHTML = content;
             }
             // Offer split order
-            const offerOrders = oqDataMap['offer_' + offerPrice] || [];
-            const offerLines = calcSplitOrderFromCache(offerOrders, minStocksplit);
+            let offerOrdersForSplit = [];
+            if (offerPrice !== undefined && offerPrice !== null && !isNaN(offerPrice)) {
+                const key = (typeof rowData.offerFreq === 'number' && rowData.offerFreq > ORDER_QUEUE_LIMIT) ? 'offer_' + offerPrice : 'offer_' + offerPrice;
+                offerOrdersForSplit = oqDataMap[key] || [];
+            }
+            const offerLines = calcSplitOrderFromCache(offerOrdersForSplit, minStocksplit);
             const tds = tr.querySelectorAll('td.split-order');
             if (tds.length > 1) {
                 let content = rowData.offerStockSplit || '';
@@ -481,15 +522,23 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             // Calculate bandar freq for this bid row using its price's order-queue data
             let bidBandarFreq = '';
-            if (typeof minBidBandar === 'number' && !isNaN(minBidBandar) && minBidBandar > 0 && bid.price !== undefined && bid.price !== null && !isNaN(bid.price)) {
-                const oqOrders = oqDataMap['bid_' + bid.price] || [];
-                bidBandarFreq = oqOrders.filter(o => Number(o.lot) >= minBidBandar).length;
+            let bidOrdersForBandar = [];
+            if (bid.price !== undefined && bid.price !== null && !isNaN(bid.price)) {
+                const key = (typeof bid.que_num === 'number' && bid.que_num > ORDER_QUEUE_LIMIT) ? 'bid_' + bid.price + '_sorted' : 'bid_' + bid.price;
+                bidOrdersForBandar = oqDataMap[key] || [];
+            }
+            if (typeof minBidBandar === 'number' && !isNaN(minBidBandar) && minBidBandar > 0) {
+                bidBandarFreq = bidOrdersForBandar.filter(o => Number(o.lot) >= minBidBandar).length;
             }
             // Calculate bandar freq for this offer row using its price's order-queue data (SELL)
             let offerBandarFreq = '';
-            if (typeof minBidBandar === 'number' && !isNaN(minBidBandar) && minBidBandar > 0 && offer.price !== undefined && offer.price !== null && !isNaN(offer.price)) {
-                const oqOrders = oqDataMap['offer_' + offer.price] || [];
-                offerBandarFreq = oqOrders.filter(o => Number(o.lot) >= minBidBandar).length;
+            let offerOrdersForBandar = [];
+            if (offer.price !== undefined && offer.price !== null && !isNaN(offer.price)) {
+                const key = (typeof offer.que_num === 'number' && offer.que_num > ORDER_QUEUE_LIMIT) ? 'offer_' + offer.price + '_sorted' : 'offer_' + offer.price;
+                offerOrdersForBandar = oqDataMap[key] || [];
+            }
+            if (typeof minBidBandar === 'number' && !isNaN(minBidBandar) && minBidBandar > 0) {
+                offerBandarFreq = offerOrdersForBandar.filter(o => Number(o.lot) >= minBidBandar).length;
             }
             rows.push({
                 bidStockSplit: clean(bid.stocksplit),
