@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Sample data (Top levels of order book)
     // Left side = bid, right side = offer
     const rows = [];
+    const VISIBLE_ROWS = 5;
 
     const fmt = new Intl.NumberFormat("en-US");
 
@@ -12,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function render() {
         const tbody = document.getElementById("orderbook-body");
         tbody.innerHTML = "";
-        const displayRows = showAllRows ? rows : rows.slice(0, 10);
+        const displayRows = showAllRows ? rows : rows.slice(0, VISIBLE_ROWS);
         for (const r of displayRows) {
             function show(val) {
                 return (val === '' || val === 0 || val === '0') ? '' : fmt.format(val);
@@ -67,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function() {
             showAllRows = !showAllRows;
             render();
         };
-        btn.style.display = rows.length > 10 ? 'block' : 'none';
+        btn.style.display = rows.length > VISIBLE_ROWS ? 'block' : 'none';
     }
 
     function formatWithDot(num) {
@@ -329,12 +330,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Helper to update rows from API data, now with bandar freq calculation
     function updateRowsFromAPI(bidArr, offerArr, orderQueueOrders = [], minBidBandar = null) {
-        const maxLen = Math.max(bidArr.length, offerArr.length, 5);
+        const maxLen = Math.max(bidArr.length, offerArr.length, VISIBLE_ROWS);
         rows.length = 0;
-        // Calculate bandar freq for bid side if minBidBandar is a valid number and orderQueueOrders is available
-        let bidBandarFreq = null;
+        // Calculate bandar freq for each of the top VISIBLE_ROWS bid levels
+        let bidBandarFreqArr = Array(VISIBLE_ROWS).fill('');
         if (typeof minBidBandar === 'number' && !isNaN(minBidBandar) && Array.isArray(orderQueueOrders) && minBidBandar > 0) {
-            bidBandarFreq = orderQueueOrders.filter(o => Number(o.lot) >= minBidBandar).length;
+            for (let i = 0; i < VISIBLE_ROWS; i++) {
+                const bid = bidArr[i] || {};
+                if (bid.price !== undefined && bid.price !== null && !isNaN(bid.price)) {
+                    // Count orders at this price with lot >= minBidBandar
+                    const freq = orderQueueOrders.filter(o => Number(o.lot) >= minBidBandar && Number(o.price) === Number(bid.price)).length;
+                    bidBandarFreqArr[i] = freq;
+                } else {
+                    bidBandarFreqArr[i] = '';
+                }
+            }
         }
         for (let i = 0; i < maxLen; i++) {
             const bid = bidArr[i] || {};
@@ -347,7 +357,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 bidFreq: clean(bid.que_num),
                 bidLot: clean(bid.volume) ? Math.round(bid.volume / 100) : '',
                 bid: clean(bid.price),
-                bidBandarFreq: (i === 0 && bidBandarFreq !== null) ? bidBandarFreq : '',
+                bidBandarFreq: (i < VISIBLE_ROWS && bidBandarFreqArr[i] !== '') ? bidBandarFreqArr[i] : '',
                 offer: clean(offer.price),
                 offerStockSplit: clean(offer.stocksplit),
                 offerBandarFreq: clean(offer.bandar_freq),
@@ -433,6 +443,29 @@ document.addEventListener("DOMContentLoaded", function() {
         } catch (e) {
             return null;
         }
+    }
+
+    // Helper to set text content by id
+    function set(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+
+    function setColor(id, value, prev) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove("text-success", "text-danger", "text-white");
+        if (value > prev) el.classList.add("text-success");
+        else if (value < prev) el.classList.add("text-danger");
+        else el.classList.add("text-white");
+    }
+    function fmtVolume(val) {
+        if (val == null) return "-";
+        val = Number(val);
+        if (Math.abs(val) >= 1e9) return (val / 1e9).toFixed(2) + " B";
+        if (Math.abs(val) >= 1e6) return (val / 1e6).toFixed(2) + " M";
+        if (Math.abs(val) >= 1e3) return (val / 1e3).toFixed(2) + " K";
+        return val.toString();
     }
 
     render();
