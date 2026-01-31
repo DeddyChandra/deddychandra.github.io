@@ -201,10 +201,16 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    // Refactored: Only call getOrderQueue ONCE per search, reuse result for drawer and table
     if (callApiBtn && codeInput && orderBookCode && tokenInput) {
         callApiBtn.addEventListener("click", async function() {
-            const token = tokenInput.value.trim();
-            const code = codeInput.value.trim().toUpperCase() || "PTRO";
+            let token = tokenInput.value.trim();
+            let code = codeInput.value.trim().toUpperCase();
+            if (!code) {
+                if (apiResult) apiResult.textContent = "Please enter a stock code.";
+                orderBookCode.textContent = "Incorrect error Stock code";
+                return;
+            }
             if (!token) {
                 if (apiResult) apiResult.textContent = "Please enter a token.";
                 orderBookCode.textContent = "Incorrect error Stock code";
@@ -212,6 +218,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             if (apiResult) apiResult.textContent = "Loading...";
             try {
+                // 1. Call orderbook API
                 const response = await fetch(`https://exodus.stockbit.com/company-price-feed/v2/orderbook/companies/${code}` , {
                     method: "GET",
                     headers: {
@@ -228,7 +235,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 try {
                     data = JSON.parse(text);
                 } catch (e) {
-                    // Not JSON, show raw text
                     if (apiResult) apiResult.textContent = text;
                     orderBookCode.textContent = "Incorrect error Stock code";
                     return;
@@ -240,31 +246,26 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 if (apiResult) renderCollapsibleJSON(apiResult, data);
                 orderBookCode.textContent = code;
-                // Update info bar with API data
                 const d = data.data;
-                // In API response handler, set window.lastPrevPrice BEFORE updateRowsFromAPI and render
                 window.lastPrevPrice = typeof d.previous === 'number' ? d.previous : null;
-                // Update rows from API and render
-                updateRowsFromAPI(d.bid || [], d.offer || []);
-                // Force a second render to ensure color logic applies after lastPrevPrice is set
+                // 2. Call order-queue API (always, after orderbook)
+                let bestBid = (d && Array.isArray(d.bid) && d.bid[0] && d.bid[0].price) ? d.bid[0].price : 0;
+                const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bestBid, token });
+                window.lastOrderQueueData = oqData;
+                // Use this result for both drawer and table
+                const orderQueueResult = document.getElementById("orderqueue-result");
+                if (orderQueueResult) {
+                    if (oqData) renderCollapsibleJSON(orderQueueResult, oqData);
+                    else orderQueueResult.textContent = "No order-queue data or request failed.";
+                }
+                const minBidBandarVal = parseInt(minBidBandarInput.value.replace(/\D/g, ""), 10);
+                const minBidBandar = isNaN(minBidBandarVal) ? null : minBidBandarVal;
+                let orderQueueOrders = [];
+                if (oqData && oqData.data && Array.isArray(oqData.data.orders)) {
+                    orderQueueOrders = oqData.data.orders;
+                }
+                updateRowsFromAPI(d.bid || [], d.offer || [], orderQueueOrders, minBidBandar);
                 render();
-                // Helper for formatting
-                function fmtNum(val, digits = 2) {
-                    if (val == null || val === '') return "-";
-                    return val.toString();
-                }
-                function fmtVolume(val) {
-                    if (val == null) return "-";
-                    val = Number(val);
-                    if (Math.abs(val) >= 1e9) return (val/1e9).toFixed(2) + " B";
-                    if (Math.abs(val) >= 1e6) return (val/1e6).toFixed(2) + " M";
-                    if (Math.abs(val) >= 1e3) return (val/1e3).toFixed(2) + " K";
-                    return val.toString();
-                }
-                function set(id, val) {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = fmtNum(val);
-                }
                 set("infoOpen", d.open);
                 set("infoPrev", d.previous);
                 document.getElementById("infoLot").textContent = fmtVolume(d.volume/100);
@@ -277,53 +278,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById("infoFBuy").textContent = fmtVolume(d.fbuy/100);
                 document.getElementById("infoFSell").textContent = fmtVolume(d.fsell/100);
                 document.getElementById("infoFreq").textContent = fmtVolume(d.frequency);
-
-                // --- Dynamic color logic ---
-                function setColor(id, value, prev) {
-                    const el = document.getElementById(id);
-                    if (!el) return;
-                    el.classList.remove("text-success", "text-danger", "text-white");
-                    if (value > prev) el.classList.add("text-success");
-                    else if (value < prev) el.classList.add("text-danger");
-                    else el.classList.add("text-white");
-                }
-                // Open, High, Low, Avg vs Prev
                 setColor("infoOpen", d.open, d.previous);
                 setColor("infoHigh", d.high, d.previous);
                 setColor("infoLow", d.low, d.previous);
                 setColor("infoAvg", d.average, d.previous);
-
-                // In API response handler, set window.lastPrevPrice
                 window.lastPrevPrice = typeof d.previous === 'number' ? d.previous : null;
-
-                // After main API call, also show order-queue result in drawer (default: buy, price from best bid if available)
-                let bestBid = (data && data.data && Array.isArray(data.data.bid) && data.data.bid[0] && data.data.bid[0].price) ? data.data.bid[0].price : 0;
-                await showOrderQueueResultInDrawer({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bestBid, token });
-                // Calculate bandar freq from order-queue and update table
-                const minBidBandarVal = parseInt(minBidBandarInput.value.replace(/\D/g, ""), 10);
-                const minBidBandar = isNaN(minBidBandarVal) ? null : minBidBandarVal;
-                const orderQueueResult = document.getElementById("orderqueue-result");
-                let orderQueueOrders = [];
-                if (orderQueueResult && orderQueueResult.textContent !== "No order-queue data or request failed.") {
-                    // Try to get the latest order-queue data from the JSON viewer
-                    try {
-                        // window.lastOrderQueueData is not set, so parse from DOM if possible
-                        const lastOrderQueue = window.lastOrderQueueData || null;
-                        if (lastOrderQueue && lastOrderQueue.data && Array.isArray(lastOrderQueue.data.orders)) {
-                            orderQueueOrders = lastOrderQueue.data.orders;
-                        }
-                    } catch {}
-                }
-                // If window.lastOrderQueueData is not set, try to fetch directly
-                if (!orderQueueOrders.length && typeof getOrderQueue === 'function') {
-                    const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bestBid, token });
-                    if (oqData && oqData.data && Array.isArray(oqData.data.orders)) {
-                        orderQueueOrders = oqData.data.orders;
-                        window.lastOrderQueueData = oqData;
-                    }
-                }
-                updateRowsFromAPI(d.bid || [], d.offer || [], orderQueueOrders, minBidBandar);
-                render();
             } catch (err) {
                 if (apiResult) apiResult.textContent = "Request failed: " + err;
                 orderBookCode.textContent = "Incorrect error Stock code";
@@ -334,7 +293,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- Fix: Update table on minBidBandarInput input (not just change) and always update after both API calls ---
     minBidBandarInput.addEventListener("input", async function() {
         const token = tokenInput.value.trim();
-        const code = codeInput.value.trim().toUpperCase() || "PTRO";
+        const code = codeInput.value.trim().toUpperCase();
         let bestBid = 0;
         if (window.lastOrderBookData && window.lastOrderBookData.data && Array.isArray(window.lastOrderBookData.data.bid) && window.lastOrderBookData.data.bid[0] && window.lastOrderBookData.data.bid[0].price) {
             bestBid = window.lastOrderBookData.data.bid[0].price;
@@ -392,7 +351,7 @@ document.addEventListener("DOMContentLoaded", function() {
     minBidBandarInput.addEventListener("change", async function() {
         // Get latest context
         const token = tokenInput.value.trim();
-        const code = codeInput.value.trim().toUpperCase() || "PTRO";
+        const code = codeInput.value.trim().toUpperCase();
         // Use best bid price from last orderbook data if available
         let bestBid = 0;
         if (window.lastOrderBookData && window.lastOrderBookData.data && Array.isArray(window.lastOrderBookData.data.bid) && window.lastOrderBookData.data.bid[0] && window.lastOrderBookData.data.bid[0].price) {
