@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.setMinBidBandar = function(val) {
         document.getElementById("minBidBandarInput").value = formatWithDot(val);
+        recalcBandarFreqAndRender();
     };
 
     const minBidBandarInput = document.getElementById("minBidBandarInput");
@@ -290,32 +291,41 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- Fix: Update table on minBidBandarInput input (not just change) and always update after both API calls ---
-    minBidBandarInput.addEventListener("input", async function() {
-        const token = tokenInput.value.trim();
-        const code = codeInput.value.trim().toUpperCase();
-        let bestBid = 0;
-        if (window.lastOrderBookData && window.lastOrderBookData.data && Array.isArray(window.lastOrderBookData.data.bid) && window.lastOrderBookData.data.bid[0] && window.lastOrderBookData.data.bid[0].price) {
-            bestBid = window.lastOrderBookData.data.bid[0].price;
-        }
+    // --- Update table and bandar freq on minBidBandarInput input/change ---
+    function recalcBandarFreqAndRender() {
         const minBidBandarVal = parseInt(minBidBandarInput.value.replace(/\D/g, ""), 10);
         const minBidBandar = isNaN(minBidBandarVal) ? null : minBidBandarVal;
+        // Use cached order-queue data
         let orderQueueOrders = [];
-        if (typeof getOrderQueue === 'function') {
-            const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bestBid, token });
-            if (oqData && oqData.data && Array.isArray(oqData.data.orders)) {
-                orderQueueOrders = oqData.data.orders;
-                window.lastOrderQueueData = oqData;
-            }
+        if (window.lastOrderQueueData && window.lastOrderQueueData.data && Array.isArray(window.lastOrderQueueData.data.orders)) {
+            orderQueueOrders = window.lastOrderQueueData.data.orders;
         }
-        let bidArr = [], offerArr = [];
+        // Use cached orderbook data
+        let bidArr, offerArr;
         if (window.lastOrderBookData && window.lastOrderBookData.data) {
-            bidArr = window.lastOrderBookData.data.bid || [];
-            offerArr = window.lastOrderBookData.data.offer || [];
+            bidArr = window.lastOrderBookData.data.bid;
+            offerArr = window.lastOrderBookData.data.offer;
+        } else {
+            // If not available, keep previous rows (do not clear)
+            bidArr = rows.map(r => ({
+                stocksplit: r.bidStockSplit,
+                que_num: r.bidFreq,
+                volume: r.bidLot ? r.bidLot * 100 : undefined,
+                price: r.bid
+            }));
+            offerArr = rows.map(r => ({
+                stocksplit: r.offerStockSplit,
+                que_num: r.offerFreq,
+                volume: r.offerLot ? r.offerLot * 100 : undefined,
+                price: r.offer
+            }));
         }
         updateRowsFromAPI(bidArr, offerArr, orderQueueOrders, minBidBandar);
         render();
-    });
+    }
+    window.recalcBandarFreqAndRender = recalcBandarFreqAndRender;
+    minBidBandarInput.addEventListener("input", recalcBandarFreqAndRender);
+    minBidBandarInput.addEventListener("change", recalcBandarFreqAndRender);
 
     // Helper to update rows from API data, now with bandar freq calculation
     function updateRowsFromAPI(bidArr, offerArr, orderQueueOrders = [], minBidBandar = null) {
@@ -330,7 +340,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const bid = bidArr[i] || {};
             const offer = offerArr[i] || {};
             function clean(val) {
-                return (val === undefined || val === null || isNaN(val) || val === 0) ? '' : val;
+                return (val === undefined || val === null || isNaN(val)) ? '' : val;
             }
             rows.push({
                 bidStockSplit: clean(bid.stocksplit),
@@ -347,37 +357,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // --- New: Update table when minBidBandarInput changes ---
-    minBidBandarInput.addEventListener("change", async function() {
-        // Get latest context
-        const token = tokenInput.value.trim();
-        const code = codeInput.value.trim().toUpperCase();
-        // Use best bid price from last orderbook data if available
-        let bestBid = 0;
-        if (window.lastOrderBookData && window.lastOrderBookData.data && Array.isArray(window.lastOrderBookData.data.bid) && window.lastOrderBookData.data.bid[0] && window.lastOrderBookData.data.bid[0].price) {
-            bestBid = window.lastOrderBookData.data.bid[0].price;
-        }
-        // Get minBidBandar value
-        const minBidBandarVal = parseInt(minBidBandarInput.value.replace(/\D/g, ""), 10);
-        const minBidBandar = isNaN(minBidBandarVal) ? null : minBidBandarVal;
-        // Get order-queue data
-        let orderQueueOrders = [];
-        if (typeof getOrderQueue === 'function') {
-            const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bestBid, token });
-            if (oqData && oqData.data && Array.isArray(oqData.data.orders)) {
-                orderQueueOrders = oqData.data.orders;
-                window.lastOrderQueueData = oqData;
-            }
-        }
-        // Use last orderbook data for bid/offer
-        let bidArr = [], offerArr = [];
-        if (window.lastOrderBookData && window.lastOrderBookData.data) {
-            bidArr = window.lastOrderBookData.data.bid || [];
-            offerArr = window.lastOrderBookData.data.offer || [];
-        }
-        updateRowsFromAPI(bidArr, offerArr, orderQueueOrders, minBidBandar);
-        render();
-    });
+    // Remove the old async change event handler for minBidBandarInput (now handled by recalcBandarFreqAndRender)
 
     // Listen for changes in watchlist input and update cookie/buttons
     const watchlistInput = document.getElementById('watchlistInput');
