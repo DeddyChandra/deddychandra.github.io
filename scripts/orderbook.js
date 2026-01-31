@@ -387,6 +387,28 @@ document.addEventListener("DOMContentLoaded", function() {
         return result;
     }
 
+    // Synchronous split order calculation from cached order-queue data
+    function calcSplitOrderFromCache(orders, minStocksplit) {
+        if (!Array.isArray(orders) || !orders.length) return '';
+        // Group by time and sum lot
+        const groupMap = {};
+        orders.forEach(o => {
+            if (!o.time) return;
+            let t = o.time.split('T')[1];
+            if (!t) return;
+            t = t.split('.')[0]; // "15:49:54"
+            if (!groupMap[t]) groupMap[t] = { count: 0, lot: 0 };
+            groupMap[t].count++;
+            groupMap[t].lot += Number(o.lot) || 0;
+        });
+        const minCount = Number(minStocksplit) || 0;
+        const fmt = new Intl.NumberFormat("en-US");
+        const lines = Object.entries(groupMap)
+            .filter(([t, obj]) => obj.count >= minCount)
+            .map(([t, obj]) => `${t} x ${obj.count} : ${fmt.format(obj.lot)} lot`);
+        return lines;
+    }
+
     // --- Render Split Order in Table (per row, per price) ---
     async function updateSplitOrderColumns() {
         const minStocksplitInput = document.getElementById('minStocksplitInput');
@@ -397,52 +419,40 @@ document.addEventListener("DOMContentLoaded", function() {
         const tbody = document.getElementById('orderbook-body');
         if (!tbody) return;
         const trs = tbody.querySelectorAll('tr');
-        // For each visible row, get bid/offer price and update split order columns
-        const promises = [];
+        const oqDataMap = window.lastOrderQueueDataMap || {};
         trs.forEach((tr, i) => {
-            // Get bid and offer price from the table row data (rows[i])
             const rowData = rows[i] || {};
             const bidPrice = rowData.bid;
             const offerPrice = rowData.offer;
             // Bid split order
-            promises.push(
-                fetchAndCalcSplitOrder({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bidPrice, token, minStocksplit })
-                    .then(bidSplit => {
-                        const td = tr.querySelector('td.split-order');
-                        if (td) {
-                            let content = rowData.bidStockSplit || '';
-                            if (bidSplit) {
-                                // Split by <br> and only add <br> before the second and subsequent records
-                                const lines = bidSplit.split('<br>');
-                                lines.forEach((line, idx) => {
-                                    if (idx === 0) content += `<span class='text-info'>${line}</span>`;
-                                    else content += `<br><span class='text-info'>${line}</span>`;
-                                });
-                            }
-                            td.innerHTML = content;
-                        }
-                    })
-            );
+            const bidOrders = oqDataMap['bid_' + bidPrice] || [];
+            const bidLines = calcSplitOrderFromCache(bidOrders, minStocksplit);
+            const td = tr.querySelector('td.split-order');
+            if (td) {
+                let content = rowData.bidStockSplit || '';
+                if (bidLines.length) {
+                    bidLines.forEach((line, idx) => {
+                        if (idx === 0) content += `<span class='text-info'>${line}</span>`;
+                        else content += `<br><span class='text-info'>${line}</span>`;
+                    });
+                }
+                td.innerHTML = content;
+            }
             // Offer split order
-            promises.push(
-                fetchAndCalcSplitOrder({ stockCode: code, actionType: ACTION_TYPE.SELL, price: offerPrice, token, minStocksplit })
-                    .then(offerSplit => {
-                        const tds = tr.querySelectorAll('td.split-order');
-                        if (tds.length > 1) {
-                            let content = rowData.offerStockSplit || '';
-                            if (offerSplit) {
-                                const lines = offerSplit.split('<br>');
-                                lines.forEach((line, idx) => {
-                                    if (idx === 0) content += `<span class='text-info'>${line}</span>`;
-                                    else content += `<br><span class='text-info'>${line}</span>`;
-                                });
-                            }
-                            tds[1].innerHTML = content;
-                        }
-                    })
-            );
+            const offerOrders = oqDataMap['offer_' + offerPrice] || [];
+            const offerLines = calcSplitOrderFromCache(offerOrders, minStocksplit);
+            const tds = tr.querySelectorAll('td.split-order');
+            if (tds.length > 1) {
+                let content = rowData.offerStockSplit || '';
+                if (offerLines.length) {
+                    offerLines.forEach((line, idx) => {
+                        if (idx === 0) content += `<span class='text-info'>${line}</span>`;
+                        else content += `<br><span class='text-info'>${line}</span>`;
+                    });
+                }
+                tds[1].innerHTML = content;
+            }
         });
-        await Promise.all(promises);
     }
 
     // Add split-order class to relevant columns in render()
