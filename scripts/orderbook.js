@@ -50,21 +50,68 @@ document.addEventListener("DOMContentLoaded", function() {
         e.target.value = value;
     });
 
-    // API call logic for the drawer
-    const callApiBtn = document.getElementById("callApiBtn");
+    // --- Cookie helpers ---
+    function setCookie(name, value, days = 365) {
+        const expires = new Date(Date.now() + days*864e5).toUTCString();
+        document.cookie = name + "=" + encodeURIComponent(value) + "; expires=" + expires + "; path=/";
+    }
+    function getCookie(name) {
+        return document.cookie.split("; ").reduce((r, v) => {
+            const parts = v.split("=");
+            return parts[0] === name ? decodeURIComponent(parts[1]) : r
+        }, "");
+    }
+
+    // Move token input, code input, and button to top right
+    document.addEventListener("DOMContentLoaded", function() {
+        // Place token input, code input, and button at top right
+        const topRight = document.createElement("div");
+        topRight.style.position = "absolute";
+        topRight.style.top = "10px";
+        topRight.style.right = "10px";
+        topRight.style.zIndex = "1000";
+        topRight.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <div>
+                    <input id="tokenInput" type="text" placeholder="Token" style="width:220px;">
+                    <button id="callApiBtn" class="btn btn-primary btn-sm">Call API</button>
+                </div>
+                <div style="margin-top:2px;">
+                    <label for="codeInput" style="margin-right:6px;">Code</label>
+                    <input id="codeInput" type="text" placeholder="BUMI" style="width:100px;">
+                </div>
+            </div>
+        `;
+        document.body.appendChild(topRight);
+    });
+
+    // Load token from cookie
     const tokenInput = document.getElementById("tokenInput");
+    if (tokenInput) {
+        tokenInput.value = getCookie("api_token");
+        tokenInput.addEventListener("input", function(e) {
+            setCookie("api_token", e.target.value);
+        });
+    }
+
+    // Update Order Book code badge and error handling after API call
+    const callApiBtn = document.getElementById("callApiBtn");
+    const codeInput = document.getElementById("codeInput");
+    const orderBookCode = document.getElementById("orderBookCode");
     const apiResult = document.getElementById("apiResult");
 
-    if (callApiBtn && tokenInput && apiResult) {
+    if (callApiBtn && codeInput && orderBookCode && tokenInput) {
         callApiBtn.addEventListener("click", async function() {
             const token = tokenInput.value.trim();
+            const code = codeInput.value.trim().toUpperCase() || "BUMI";
             if (!token) {
-                apiResult.textContent = "Please enter a token.";
+                if (apiResult) apiResult.textContent = "Please enter a token.";
+                orderBookCode.textContent = "Incorrect error Stock code";
                 return;
             }
-            apiResult.textContent = "Loading...";
+            if (apiResult) apiResult.textContent = "Loading...";
             try {
-                const response = await fetch("https://exodus.stockbit.com/company-price-feed/v2/orderbook/companies/DEWA", {
+                const response = await fetch(`https://exodus.stockbit.com/company-price-feed/v2/orderbook/companies/${code}` , {
                     method: "GET",
                     headers: {
                         "accept": "application/json",
@@ -75,67 +122,75 @@ document.addEventListener("DOMContentLoaded", function() {
                         "user-agent": navigator.userAgent
                     }
                 });
-                if (!response.ok) {
-                    const text = await response.text();
-                    apiResult.textContent = `Error: ${response.status} ${response.statusText}\n${text}`;
+                const text = await response.text();
+                let data = null;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    // Not JSON, show raw text
+                    if (apiResult) apiResult.textContent = text;
+                    orderBookCode.textContent = "Incorrect error Stock code";
                     return;
                 }
-                const data = await response.json();
-                apiResult.textContent = JSON.stringify(data, null, 2);
-
-                // Update info bar with API data
-                if (data && data.data) {
-                    const d = data.data;
-                    // Helper for formatting
-                    function fmtNum(val, digits = 2) {
-                        if (val == null) return "-";
-                        if (Math.abs(val) >= 1e9) return (val/1e9).toFixed(digits) + " B";
-                        if (Math.abs(val) >= 1e6) return (val/1e6).toFixed(digits) + " M";
-                        if (Math.abs(val) >= 1e3) return (val/1e3).toFixed(digits) + " K";
-                        return val.toString();
-                    }
-                    function fmtVolume(val) {
-                        if (val == null) return "-";
-                        val = Number(val);
-                        if (Math.abs(val) >= 1e9) return (val/1e9).toFixed(2) + " B";
-                        if (Math.abs(val) >= 1e6) return (val/1e6).toFixed(2) + " M";
-                        if (Math.abs(val) >= 1e3) return (val/1e3).toFixed(2) + " K";
-                        return val.toString();
-                    }
-                    function set(id, val, digits) {
-                        const el = document.getElementById(id);
-                        if (el) el.textContent = fmtNum(val, digits);
-                    }
-                    set("infoOpen", d.open);
-                    set("infoPrev", d.previous);
-                    document.getElementById("infoLot").textContent = fmtVolume(d.volume/100);
-                    set("infoHigh", d.high);
-                    set("infoARA", d.ara.value);
-                    document.getElementById("infoVal").textContent = fmtVolume(d.value/100);
-                    set("infoLow", d.low);
-                    set("infoARB", d.arb.value);
-                    set("infoAvg", d.average);
-                    document.getElementById("infoFBuy").textContent = fmtVolume(d.fbuy/100);
-                    document.getElementById("infoFSell").textContent = fmtVolume(d.fsell/100);
-                    document.getElementById("infoFreq").textContent = fmtVolume(d.frequency);
-
-                    // --- Dynamic color logic ---
-                    function setColor(id, value, prev) {
-                        const el = document.getElementById(id);
-                        if (!el) return;
-                        el.classList.remove("text-success", "text-danger", "text-white");
-                        if (value > prev) el.classList.add("text-success");
-                        else if (value < prev) el.classList.add("text-danger");
-                        else el.classList.add("text-white");
-                    }
-                    // Open, High, Low, Avg vs Prev
-                    setColor("infoOpen", d.open, d.previous);
-                    setColor("infoHigh", d.high, d.previous);
-                    setColor("infoLow", d.low, d.previous);
-                    setColor("infoAvg", d.average, d.previous);
+                if (!response.ok || !data || !data.data) {
+                    if (apiResult) apiResult.textContent = `Error: ${response.status} ${response.statusText}\n${text}`;
+                    orderBookCode.textContent = "Incorrect error Stock code";
+                    return;
                 }
+                if (apiResult) apiResult.textContent = JSON.stringify(data, null, 2);
+                orderBookCode.textContent = code;
+                // Update info bar with API data
+                const d = data.data;
+                // Helper for formatting
+                function fmtNum(val, digits = 2) {
+                    if (val == null) return "-";
+                    if (Math.abs(val) >= 1e9) return (val/1e9).toFixed(digits) + " B";
+                    if (Math.abs(val) >= 1e6) return (val/1e6).toFixed(digits) + " M";
+                    if (Math.abs(val) >= 1e3) return (val/1e3).toFixed(digits) + " K";
+                    return val.toString();
+                }
+                function fmtVolume(val) {
+                    if (val == null) return "-";
+                    val = Number(val);
+                    if (Math.abs(val) >= 1e9) return (val/1e9).toFixed(2) + " B";
+                    if (Math.abs(val) >= 1e6) return (val/1e6).toFixed(2) + " M";
+                    if (Math.abs(val) >= 1e3) return (val/1e3).toFixed(2) + " K";
+                    return val.toString();
+                }
+                function set(id, val, digits) {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = fmtNum(val, digits);
+                }
+                set("infoOpen", d.open);
+                set("infoPrev", d.previous);
+                document.getElementById("infoLot").textContent = fmtVolume(d.volume/100);
+                set("infoHigh", d.high);
+                set("infoARA", d.ara.value);
+                document.getElementById("infoVal").textContent = fmtVolume(d.value/100);
+                set("infoLow", d.low);
+                set("infoARB", d.arb.value);
+                set("infoAvg", d.average);
+                document.getElementById("infoFBuy").textContent = fmtVolume(d.fbuy/100);
+                document.getElementById("infoFSell").textContent = fmtVolume(d.fsell/100);
+                document.getElementById("infoFreq").textContent = fmtVolume(d.frequency);
+
+                // --- Dynamic color logic ---
+                function setColor(id, value, prev) {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    el.classList.remove("text-success", "text-danger", "text-white");
+                    if (value > prev) el.classList.add("text-success");
+                    else if (value < prev) el.classList.add("text-danger");
+                    else el.classList.add("text-white");
+                }
+                // Open, High, Low, Avg vs Prev
+                setColor("infoOpen", d.open, d.previous);
+                setColor("infoHigh", d.high, d.previous);
+                setColor("infoLow", d.low, d.previous);
+                setColor("infoAvg", d.average, d.previous);
             } catch (err) {
-                apiResult.textContent = "Request failed: " + err;
+                if (apiResult) apiResult.textContent = "Request failed: " + err;
+                orderBookCode.textContent = "Incorrect error Stock code";
             }
         });
     }
