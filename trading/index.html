@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Stock Order Book</title>
+    <title>Bandar Detector Order Book</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -99,6 +100,7 @@
             max-width: 260px;
             white-space: pre-line;
             word-break: break-all;
+            vertical-align: middle !important;
         }
     </style>
 </head>
@@ -112,7 +114,7 @@
 
     <!-- Order Book Title and Code Input -->
     <div class="mb-3">
-        <h1>Order Book <span class="badge" id="orderBookCode"></span></h1>
+        <h1><i class="fa-solid fa-fish me-2"></i>Bandar Detector Order Book <span class="badge" id="orderBookCode"></span></h1>
 
         <!-- Code Input -->
         <div class="mb-3 d-flex align-items-center" style="gap:8px;">
@@ -219,7 +221,7 @@
         <tr>
             <td colspan="9" class="bg-transparent p-2">
                 <div class="d-flex align-items-center mb-2 flex-wrap" style="gap:8px;">
-                    <label for="minBidBandarInput" class="form-label mb-0">Minimal Bid Bandar:</label>
+                    <label for="minBidBandarInput" class="form-label mb-0">Minimal lot Bandar:</label>
                     <input type="text" id="minBidBandarInput" class="form-control text-center" style="max-width:120px;" />
                 </div>
                 <div class="d-flex flex-wrap gap-2 mb-2">
@@ -236,7 +238,8 @@
             </td>
         </tr>
         <tr>
-            <th class="center split-order">Split <br> Order</th>
+            <th class="center split-order">Split <br> Order <i class="fa fa-info-circle text" data-bs-toggle="tooltip" data-bs-placement="top" title="formula = time x freq : lot" style="font-size:13px;cursor:pointer;"></i>
+            </th>
             <th class="center">Bandar <br> Freq</th>
             <th class="center">Freq</th>
             <th class="center">Lot</th>
@@ -245,13 +248,17 @@
             <th class="center">Lot</th>
             <th class="center">Freq</th>
             <th class="center">Bandar <br> Freq</th>
-            <th class="center split-order">Split <br> Order</th>
+            <th class="center split-order">Split <br> Order<i class="fa fa-info-circle ms-1 text" data-bs-toggle="tooltip" data-bs-placement="top" title="formula = time x freq : lot" style="font-size:13px;cursor:pointer;"></i>
+            </th>
         </tr>
         </thead>
         <tbody id="orderbook-body">
         <!-- Rows will be injected by JS -->
         </tbody>
     </table>
+    <div class="text-center mt-3" style="color:#aaa; font-size:13px;">
+        &copy; Deddy Chandra <br> <i class="fa-solid fa-envelope"></i> deddychandra678@gmail.com
+    </div>
 </div>
 
 <!-- Drawer (Bootstrap Offcanvas) -->
@@ -284,5 +291,12 @@
 
 <script src="../scripts/orderbook.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Enable Bootstrap tooltips
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+    new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+</script>
 </body>
 </html>

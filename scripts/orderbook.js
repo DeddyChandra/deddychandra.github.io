@@ -70,19 +70,6 @@ document.addEventListener("DOMContentLoaded", function() {
             render();
         };
         btn.style.display = rows.length > VISIBLE_ROWS ? 'block' : 'none';
-
-        // Add copyright below the button, centered
-        let copyright = document.getElementById('copyrightFooter');
-        if (!copyright) {
-            copyright = document.createElement('div');
-            copyright.id = 'copyrightFooter';
-            copyright.style.textAlign = 'center';
-            copyright.style.marginTop = '10px';
-            copyright.style.color = '#aaa';
-            copyright.style.fontSize = '13px';
-            btn.parentElement.appendChild(copyright);
-        }
-        copyright.innerHTML = '&copy; Deddy Chandra';
     }
 
     function formatWithDot(num) {
@@ -379,15 +366,24 @@ document.addEventListener("DOMContentLoaded", function() {
         // Call getOrderQueue WITHOUT sortBy/sortDirection, but with price
         const oqData = await getOrderQueue({ stockCode, actionType, price, token });
         if (!oqData || !oqData.data || !Array.isArray(oqData.data.orders)) return '';
-        // Extract all order times
-        const times = oqData.data.orders.map(o => o.time).filter(Boolean);
-        const grouped = groupTimesBySecond(times);
+        // Group by time and sum lot
+        const groupMap = {};
+        oqData.data.orders.forEach(o => {
+            if (!o.time) return;
+            let t = o.time.split('T')[1];
+            if (!t) return;
+            t = t.split('.')[0]; // "15:49:54"
+            if (!groupMap[t]) groupMap[t] = { count: 0, lot: 0 };
+            groupMap[t].count++;
+            groupMap[t].lot += Number(o.lot) || 0;
+        });
         // Only show those with count >= minStocksplit
         const minCount = Number(minStocksplit) || 0;
-        const result = Object.entries(grouped)
-            .filter(([t, count]) => count >= minCount)
-            .map(([t, count]) => `${t} x ${count}`)
-            .join('<br>'); // Use <br> for new lines
+        const fmt = new Intl.NumberFormat("en-US");
+        const result = Object.entries(groupMap)
+            .filter(([t, obj]) => obj.count >= minCount)
+            .map(([t, obj]) => `${t} x ${obj.count} : ${fmt.format(obj.lot)} lot`)
+            .join('<br>');
         return result;
     }
 
@@ -414,7 +410,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     .then(bidSplit => {
                         const td = tr.querySelector('td.split-order');
                         if (td) {
-                            td.innerHTML = `${rowData.bidStockSplit || ''}${bidSplit ? '<br><span class=\'text-info\'>' + bidSplit + '</span>' : ''}`;
+                            let content = rowData.bidStockSplit || '';
+                            if (bidSplit) {
+                                // Split by <br> and only add <br> before the second and subsequent records
+                                const lines = bidSplit.split('<br>');
+                                lines.forEach((line, idx) => {
+                                    if (idx === 0) content += `<span class='text-info'>${line}</span>`;
+                                    else content += `<br><span class='text-info'>${line}</span>`;
+                                });
+                            }
+                            td.innerHTML = content;
                         }
                     })
             );
@@ -424,7 +429,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     .then(offerSplit => {
                         const tds = tr.querySelectorAll('td.split-order');
                         if (tds.length > 1) {
-                            tds[1].innerHTML = `${rowData.offerStockSplit || ''}${offerSplit ? '<br><span class=\'text-info\'>' + offerSplit + '</span>' : ''}`;
+                            let content = rowData.offerStockSplit || '';
+                            if (offerSplit) {
+                                const lines = offerSplit.split('<br>');
+                                lines.forEach((line, idx) => {
+                                    if (idx === 0) content += `<span class='text-info'>${line}</span>`;
+                                    else content += `<br><span class='text-info'>${line}</span>`;
+                                });
+                            }
+                            tds[1].innerHTML = content;
                         }
                     })
             );
