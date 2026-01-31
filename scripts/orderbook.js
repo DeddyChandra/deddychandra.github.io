@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
                 <div style="margin-top:2px;">
                     <label for="codeInput" style="margin-right:6px;">Code</label>
-                    <input id="codeInput" type="text" placeholder="BUMI" style="width:100px;">
+                    <input id="codeInput" type="text" placeholder="PTRO" style="width:100px;">
                 </div>
             </div>
         `;
@@ -185,10 +185,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Update Order Book code badge and error handling after API call
 
+    // Add a section in the drawer for order-queue result
+    // Usage: show the result in a collapsible JSON viewer
+    // This will be updated after the main render() call for clarity
+    async function showOrderQueueResultInDrawer({ stockCode, actionType, price, token }) {
+        const orderQueueResult = document.getElementById("orderqueue-result");
+        if (!orderQueueResult) return;
+        orderQueueResult.textContent = "Loading...";
+        const data = await getOrderQueue({ stockCode, actionType, price, token });
+        console.log(data);
+        if (data) {
+            renderCollapsibleJSON(orderQueueResult, data);
+        } else {
+            orderQueueResult.textContent = "No order-queue data or request failed.";
+        }
+    }
+
     if (callApiBtn && codeInput && orderBookCode && tokenInput) {
         callApiBtn.addEventListener("click", async function() {
             const token = tokenInput.value.trim();
-            const code = codeInput.value.trim().toUpperCase() || "BUMI";
+            const code = codeInput.value.trim().toUpperCase() || "PTRO";
             if (!token) {
                 if (apiResult) apiResult.textContent = "Please enter a token.";
                 orderBookCode.textContent = "Incorrect error Stock code";
@@ -279,6 +295,35 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 // In API response handler, set window.lastPrevPrice
                 window.lastPrevPrice = typeof d.previous === 'number' ? d.previous : null;
+
+                // After main API call, also show order-queue result in drawer (default: buy, price from best bid if available)
+                let bestBid = (data && data.data && Array.isArray(data.data.bid) && data.data.bid[0] && data.data.bid[0].price) ? data.data.bid[0].price : 0;
+                await showOrderQueueResultInDrawer({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bestBid, token });
+                // Calculate bandar freq from order-queue and update table
+                const minBidBandarVal = parseInt(minBidBandarInput.value.replace(/\D/g, ""), 10);
+                const minBidBandar = isNaN(minBidBandarVal) ? null : minBidBandarVal;
+                const orderQueueResult = document.getElementById("orderqueue-result");
+                let orderQueueOrders = [];
+                if (orderQueueResult && orderQueueResult.textContent !== "No order-queue data or request failed.") {
+                    // Try to get the latest order-queue data from the JSON viewer
+                    try {
+                        // window.lastOrderQueueData is not set, so parse from DOM if possible
+                        const lastOrderQueue = window.lastOrderQueueData || null;
+                        if (lastOrderQueue && lastOrderQueue.data && Array.isArray(lastOrderQueue.data.orders)) {
+                            orderQueueOrders = lastOrderQueue.data.orders;
+                        }
+                    } catch {}
+                }
+                // If window.lastOrderQueueData is not set, try to fetch directly
+                if (!orderQueueOrders.length && typeof getOrderQueue === 'function') {
+                    const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bestBid, token });
+                    if (oqData && oqData.data && Array.isArray(oqData.data.orders)) {
+                        orderQueueOrders = oqData.data.orders;
+                        window.lastOrderQueueData = oqData;
+                    }
+                }
+                updateRowsFromAPI(d.bid || [], d.offer || [], orderQueueOrders, minBidBandar);
+                render();
             } catch (err) {
                 if (apiResult) apiResult.textContent = "Request failed: " + err;
                 orderBookCode.textContent = "Incorrect error Stock code";
@@ -286,10 +331,42 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Helper to update rows from API data
-    function updateRowsFromAPI(bidArr, offerArr) {
+    // --- Fix: Update table on minBidBandarInput input (not just change) and always update after both API calls ---
+    minBidBandarInput.addEventListener("input", async function() {
+        const token = tokenInput.value.trim();
+        const code = codeInput.value.trim().toUpperCase() || "PTRO";
+        let bestBid = 0;
+        if (window.lastOrderBookData && window.lastOrderBookData.data && Array.isArray(window.lastOrderBookData.data.bid) && window.lastOrderBookData.data.bid[0] && window.lastOrderBookData.data.bid[0].price) {
+            bestBid = window.lastOrderBookData.data.bid[0].price;
+        }
+        const minBidBandarVal = parseInt(minBidBandarInput.value.replace(/\D/g, ""), 10);
+        const minBidBandar = isNaN(minBidBandarVal) ? null : minBidBandarVal;
+        let orderQueueOrders = [];
+        if (typeof getOrderQueue === 'function') {
+            const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bestBid, token });
+            if (oqData && oqData.data && Array.isArray(oqData.data.orders)) {
+                orderQueueOrders = oqData.data.orders;
+                window.lastOrderQueueData = oqData;
+            }
+        }
+        let bidArr = [], offerArr = [];
+        if (window.lastOrderBookData && window.lastOrderBookData.data) {
+            bidArr = window.lastOrderBookData.data.bid || [];
+            offerArr = window.lastOrderBookData.data.offer || [];
+        }
+        updateRowsFromAPI(bidArr, offerArr, orderQueueOrders, minBidBandar);
+        render();
+    });
+
+    // Helper to update rows from API data, now with bandar freq calculation
+    function updateRowsFromAPI(bidArr, offerArr, orderQueueOrders = [], minBidBandar = null) {
         const maxLen = Math.max(bidArr.length, offerArr.length, 5);
         rows.length = 0;
+        // Calculate bandar freq for bid side if minBidBandar is a valid number and orderQueueOrders is available
+        let bidBandarFreq = null;
+        if (typeof minBidBandar === 'number' && !isNaN(minBidBandar) && Array.isArray(orderQueueOrders) && minBidBandar > 0) {
+            bidBandarFreq = orderQueueOrders.filter(o => Number(o.lot) >= minBidBandar).length;
+        }
         for (let i = 0; i < maxLen; i++) {
             const bid = bidArr[i] || {};
             const offer = offerArr[i] || {};
@@ -301,7 +378,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 bidFreq: clean(bid.que_num),
                 bidLot: clean(bid.volume) ? Math.round(bid.volume / 100) : '',
                 bid: clean(bid.price),
-                bidBandarFreq: clean(bid.bandar_freq),
+                bidBandarFreq: (i === 0 && bidBandarFreq !== null) ? bidBandarFreq : '',
                 offer: clean(offer.price),
                 offerStockSplit: clean(offer.stocksplit),
                 offerBandarFreq: clean(offer.bandar_freq),
@@ -310,6 +387,38 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     }
+
+    // --- New: Update table when minBidBandarInput changes ---
+    minBidBandarInput.addEventListener("change", async function() {
+        // Get latest context
+        const token = tokenInput.value.trim();
+        const code = codeInput.value.trim().toUpperCase() || "PTRO";
+        // Use best bid price from last orderbook data if available
+        let bestBid = 0;
+        if (window.lastOrderBookData && window.lastOrderBookData.data && Array.isArray(window.lastOrderBookData.data.bid) && window.lastOrderBookData.data.bid[0] && window.lastOrderBookData.data.bid[0].price) {
+            bestBid = window.lastOrderBookData.data.bid[0].price;
+        }
+        // Get minBidBandar value
+        const minBidBandarVal = parseInt(minBidBandarInput.value.replace(/\D/g, ""), 10);
+        const minBidBandar = isNaN(minBidBandarVal) ? null : minBidBandarVal;
+        // Get order-queue data
+        let orderQueueOrders = [];
+        if (typeof getOrderQueue === 'function') {
+            const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bestBid, token });
+            if (oqData && oqData.data && Array.isArray(oqData.data.orders)) {
+                orderQueueOrders = oqData.data.orders;
+                window.lastOrderQueueData = oqData;
+            }
+        }
+        // Use last orderbook data for bid/offer
+        let bidArr = [], offerArr = [];
+        if (window.lastOrderBookData && window.lastOrderBookData.data) {
+            bidArr = window.lastOrderBookData.data.bid || [];
+            offerArr = window.lastOrderBookData.data.offer || [];
+        }
+        updateRowsFromAPI(bidArr, offerArr, orderQueueOrders, minBidBandar);
+        render();
+    });
 
     // Listen for changes in watchlist input and update cookie/buttons
     const watchlistInput = document.getElementById('watchlistInput');
@@ -359,6 +468,32 @@ document.addEventListener("DOMContentLoaded", function() {
             };
             watchlistBtnContainer.appendChild(btn);
         });
+    }
+
+    // Enum for action types
+    const ACTION_TYPE = {
+        BUY: "ACTION_TYPE_BUY",
+        SELL: "ACTION_TYPE_SELL"
+    };
+
+    // Fetch order-queue API
+    async function getOrderQueue({ stockCode, actionType, price, token, limit = 1000 }) {
+        const url = `https://exodus.stockbit.com/order-trade/order-queue?stock_code=${encodeURIComponent(stockCode)}&action_type=${actionType}&board_type=BOARD_TYPE_REGULAR&order_status=ORDER_STATUS_OPEN&limit=${limit}&price=${encodeURIComponent(price)}&sort_by=SORT_BY_LOT&sort_direction=SORT_DIRECTION_DESC`;
+        const headers = {
+            "accept": "application/json",
+            "accept-language": "en",
+            "authorization": `Bearer ${token}`,
+            "origin": "https://stockbit.com",
+            "referer": "https://stockbit.com/",
+            "user-agent": navigator.userAgent
+        };
+        try {
+            const resp = await fetch(url, { headers });
+            if (!resp.ok) return null;
+            return await resp.json();
+        } catch (e) {
+            return null;
+        }
     }
 
     render();

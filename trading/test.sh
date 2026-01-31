@@ -1,0 +1,14 @@
+curl ^"https://exodus.stockbit.com/order-trade/order-queue?stock_code=BUMI^&action_type=ACTION_TYPE_BUY^&board_type=BOARD_TYPE_REGULAR^&order_status=ORDER_STATUS_OPEN^&limit=100^&price=256^" ^
+  -H ^"accept: application/json^" ^
+  -H ^"accept-language: en^" ^
+  -H ^"authorization: Bearer <token>^" ^
+  -H ^"origin: https://stockbit.com^" ^
+  -H ^"priority: u=1, i^" ^
+  -H ^"referer: https://stockbit.com/^" ^
+  -H ^"sec-ch-ua: ^\^"Not(A:Brand^\^";v=^\^"8^\^", ^\^"Chromium^\^";v=^\^"144^\^", ^\^"Google Chrome^\^";v=^\^"144^\^"^" ^
+  -H ^"sec-ch-ua-mobile: ?0^" ^
+  -H ^"sec-ch-ua-platform: ^\^"Windows^\^"^" ^
+  -H ^"sec-fetch-dest: empty^" ^
+  -H ^"sec-fetch-mode: cors^" ^
+  -H ^"sec-fetch-site: same-site^" ^
+  -H ^"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36^"
