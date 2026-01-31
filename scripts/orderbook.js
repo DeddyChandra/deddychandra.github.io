@@ -86,6 +86,10 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Load token from cookie
+    const callApiBtn = document.getElementById("callApiBtn");
+    const codeInput = document.getElementById("codeInput");
+    const orderBookCode = document.getElementById("orderBookCode");
+    const apiResult = document.getElementById("company-price-feed-orderbook");
     const tokenInput = document.getElementById("tokenInput");
     if (tokenInput) {
         tokenInput.value = getCookie("api_token");
@@ -94,11 +98,57 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // Collapsible JSON viewer
+    function renderCollapsibleJSON(container, data) {
+        container.innerHTML = '';
+        function createNode(key, value, level) {
+            const isObj = typeof value === 'object' && value !== null;
+            const wrapper = document.createElement('div');
+            wrapper.style.marginLeft = (level * 16) + 'px';
+            if (isObj) {
+                const toggle = document.createElement('span');
+                toggle.textContent = '[+]';
+                toggle.style.cursor = 'pointer';
+                toggle.style.color = '#6cf';
+                toggle.style.marginRight = '4px';
+                let expanded = false;
+                const keySpan = document.createElement('span');
+                keySpan.textContent = key ? key + ': ' : '';
+                keySpan.style.color = '#fff';
+                wrapper.appendChild(toggle);
+                wrapper.appendChild(keySpan);
+                const type = Array.isArray(value) ? 'Array' : 'Object';
+                const typeSpan = document.createElement('span');
+                typeSpan.textContent = type;
+                typeSpan.style.color = '#aaa';
+                wrapper.appendChild(typeSpan);
+                const children = document.createElement('div');
+                children.style.display = 'none';
+                for (const k in value) {
+                    children.appendChild(createNode(k, value[k], level + 1));
+                }
+                wrapper.appendChild(children);
+                toggle.onclick = function() {
+                    expanded = !expanded;
+                    toggle.textContent = expanded ? '[-]' : '[+]';
+                    children.style.display = expanded ? '' : 'none';
+                };
+            } else {
+                const keySpan = document.createElement('span');
+                keySpan.textContent = key ? key + ': ' : '';
+                keySpan.style.color = '#fff';
+                wrapper.appendChild(keySpan);
+                const valSpan = document.createElement('span');
+                valSpan.textContent = JSON.stringify(value);
+                valSpan.style.color = '#fc6';
+                wrapper.appendChild(valSpan);
+            }
+            return wrapper;
+        }
+        container.appendChild(createNode('', data, 0));
+    }
+
     // Update Order Book code badge and error handling after API call
-    const callApiBtn = document.getElementById("callApiBtn");
-    const codeInput = document.getElementById("codeInput");
-    const orderBookCode = document.getElementById("orderBookCode");
-    const apiResult = document.getElementById("apiResult");
 
     if (callApiBtn && codeInput && orderBookCode && tokenInput) {
         callApiBtn.addEventListener("click", async function() {
@@ -133,11 +183,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     return;
                 }
                 if (!response.ok || !data || !data.data) {
-                    if (apiResult) apiResult.textContent = `Error: ${response.status} ${response.statusText}\n${text}`;
+                    if (apiResult) renderCollapsibleJSON(apiResult, data || { error: text });
                     orderBookCode.textContent = "Incorrect error Stock code";
                     return;
                 }
-                if (apiResult) apiResult.textContent = JSON.stringify(data, null, 2);
+                if (apiResult) renderCollapsibleJSON(apiResult, data);
                 orderBookCode.textContent = code;
                 // Update info bar with API data
                 const d = data.data;
