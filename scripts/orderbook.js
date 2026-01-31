@@ -70,6 +70,19 @@ document.addEventListener("DOMContentLoaded", function() {
             render();
         };
         btn.style.display = rows.length > VISIBLE_ROWS ? 'block' : 'none';
+
+        // Add copyright below the button, centered
+        let copyright = document.getElementById('copyrightFooter');
+        if (!copyright) {
+            copyright = document.createElement('div');
+            copyright.id = 'copyrightFooter';
+            copyright.style.textAlign = 'center';
+            copyright.style.marginTop = '10px';
+            copyright.style.color = '#aaa';
+            copyright.style.fontSize = '13px';
+            btn.parentElement.appendChild(copyright);
+        }
+        copyright.innerHTML = '&copy; Deddy Chandra';
     }
 
     function formatWithDot(num) {
