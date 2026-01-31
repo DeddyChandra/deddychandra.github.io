@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Left side = bid, right side = offer
     const rows = [];
     const VISIBLE_ROWS = 1;
+    const ORDER_QUEUE_LIMIT = 300;
 
     const fmt = new Intl.NumberFormat("en-US");
 
@@ -36,16 +37,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 else offerClass = 'text-white';
             }
             tr.innerHTML = `
-              <td class="center">${r.bidStockSplit}</td>
+              <td class="center split-order">${r.bidStockSplit}</td>
               <td class="center">${show(r.bidBandarFreq)}</td>
               <td class="center">${show(r.bidFreq)}</td>
               <td class="center">${show(r.bidLot)}</td>
               <td class="center split-left ${bidClass}">${show(r.bid)}</td>
-              <td class="center split-mid ${offerClass}">${show(r.offer)}</td>
+              <td class="center split-right ${offerClass}">${show(r.offer)}</td>
               <td class="center">${show(r.offerLot)}</td>
               <td class="center">${show(r.offerFreq)}</td>
               <td class="center">${show(r.offerBandarFreq)}</td>
-              <td class="center">${r.offerStockSplit}</td>
+              <td class="center split-order">${r.offerStockSplit}</td>
             `;
             tbody.appendChild(tr);
         }
@@ -195,7 +196,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!orderQueueResult) return;
         orderQueueResult.textContent = "Loading...";
         const data = await getOrderQueue({ stockCode, actionType, price, token });
-        console.log(data);
         if (data) {
             renderCollapsibleJSON(orderQueueResult, data);
         } else {
@@ -347,6 +347,92 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // --- Split Order Calculation ---
+    // Helper: group array of ISO datetimes by HH:mm:ss and count occurrences
+    function groupTimesBySecond(arr) {
+        const map = {};
+        arr.forEach(dt => {
+            // dt: ISO string, e.g. "2026-01-30T15:49:54.908110Z"
+            let t = dt.split('T')[1];
+            if (!t) return;
+            t = t.split('.')[0]; // "15:49:54"
+            map[t] = (map[t] || 0) + 1;
+        });
+        return map;
+    }
+
+    // Fetch and calculate split order for a given code, action, price, and minStocksplit
+    async function fetchAndCalcSplitOrder({ stockCode, actionType, price, token, minStocksplit }) {
+        // Call getOrderQueue WITHOUT sortBy/sortDirection, but with price
+        const oqData = await getOrderQueue({ stockCode, actionType, price, token });
+        if (!oqData || !oqData.data || !Array.isArray(oqData.data.orders)) return '';
+        // Extract all order times
+        const times = oqData.data.orders.map(o => o.time).filter(Boolean);
+        const grouped = groupTimesBySecond(times);
+        // Only show those with count >= minStocksplit
+        const minCount = Number(minStocksplit) || 0;
+        const result = Object.entries(grouped)
+            .filter(([t, count]) => count >= minCount)
+            .map(([t, count]) => `${t} x ${count}`)
+            .join('<br>'); // Use <br> for new lines
+        return result;
+    }
+
+    // --- Render Split Order in Table (per row, per price) ---
+    async function updateSplitOrderColumns() {
+        const minStocksplitInput = document.getElementById('minStocksplitInput');
+        const minStocksplit = minStocksplitInput ? minStocksplitInput.value : 0;
+        const code = (document.getElementById('codeInput') || {}).value || '';
+        const token = (document.getElementById('tokenInput') || {}).value || '';
+        if (!code || !token) return;
+        const tbody = document.getElementById('orderbook-body');
+        if (!tbody) return;
+        const trs = tbody.querySelectorAll('tr');
+        // For each visible row, get bid/offer price and update split order columns
+        const promises = [];
+        trs.forEach((tr, i) => {
+            // Get bid and offer price from the table row data (rows[i])
+            const rowData = rows[i] || {};
+            const bidPrice = rowData.bid;
+            const offerPrice = rowData.offer;
+            // Bid split order
+            promises.push(
+                fetchAndCalcSplitOrder({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bidPrice, token, minStocksplit })
+                    .then(bidSplit => {
+                        const td = tr.querySelector('td.split-order');
+                        if (td) {
+                            td.innerHTML = `${rowData.bidStockSplit || ''}${bidSplit ? '<br><span class=\'text-info\'>' + bidSplit + '</span>' : ''}`;
+                        }
+                    })
+            );
+            // Offer split order
+            promises.push(
+                fetchAndCalcSplitOrder({ stockCode: code, actionType: ACTION_TYPE.SELL, price: offerPrice, token, minStocksplit })
+                    .then(offerSplit => {
+                        const tds = tr.querySelectorAll('td.split-order');
+                        if (tds.length > 1) {
+                            tds[1].innerHTML = `${rowData.offerStockSplit || ''}${offerSplit ? '<br><span class=\'text-info\'>' + offerSplit + '</span>' : ''}`;
+                        }
+                    })
+            );
+        });
+        await Promise.all(promises);
+    }
+
+    // Add split-order class to relevant columns in render()
+    // (You may need to update your render() function to add class="split-order" to the first and last td)
+    // Call updateSplitOrderColumns after render
+    const origRender = render;
+    render = function() {
+        origRender();
+        updateSplitOrderColumns();
+    };
+    // Also update on minStocksplitInput change
+    if (minStocksplitInput) {
+        minStocksplitInput.addEventListener('input', updateSplitOrderColumns);
+        minStocksplitInput.addEventListener('change', updateSplitOrderColumns);
+    }
+
     // Helper to update rows from API data, now with bandar freq calculation
     function updateRowsFromAPI(bidArr, offerArr, oqDataMap = {}, minBidBandar = null) {
         const maxLen = Math.max(bidArr.length, offerArr.length, VISIBLE_ROWS);
@@ -443,7 +529,7 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     // Fetch order-queue API
-    async function getOrderQueue({ stockCode, actionType, price, token, limit = 1000, sortBy, sortDirection }) {
+    async function getOrderQueue({ stockCode, actionType, price, token, limit = ORDER_QUEUE_LIMIT, sortBy, sortDirection }) {
         let url = `https://exodus.stockbit.com/order-trade/order-queue?stock_code=${encodeURIComponent(stockCode)}&action_type=${actionType}&board_type=BOARD_TYPE_REGULAR&order_status=ORDER_STATUS_OPEN&limit=${limit}&price=${encodeURIComponent(price)}`;
         if (sortBy && sortDirection) {
             url += `&sort_by=${encodeURIComponent(sortBy)}&sort_direction=${encodeURIComponent(sortDirection)}`;
