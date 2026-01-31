@@ -250,23 +250,31 @@ document.addEventListener("DOMContentLoaded", function() {
                 orderBookCode.textContent = code;
                 const d = data.data;
                 window.lastPrevPrice = typeof d.previous === 'number' ? d.previous : null;
-                // 2. Call order-queue API (always, after orderbook)
-                let bestBid = (d && Array.isArray(d.bid) && d.bid[0] && d.bid[0].price) ? d.bid[0].price : 0;
-                const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price: bestBid, token });
-                window.lastOrderQueueData = oqData;
-                // Use this result for both drawer and table
+                // 2. Call order-queue API for top 5 bid and offer prices
+                let bidPrices = (d.bid || []).slice(0, VISIBLE_ROWS).map(b => b.price).filter(p => p !== undefined && p !== null && !isNaN(p));
+                let offerPrices = (d.offer || []).slice(0, VISIBLE_ROWS).map(o => o.price).filter(p => p !== undefined && p !== null && !isNaN(p));
+                let oqDataMap = {};
+                await Promise.all([
+                    ...bidPrices.map(async (price) => {
+                        const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.BUY, price, token });
+                        oqDataMap['bid_' + price] = oqData && oqData.data && Array.isArray(oqData.data.orders) ? oqData.data.orders : [];
+                    }),
+                    ...offerPrices.map(async (price) => {
+                        const oqData = await getOrderQueue({ stockCode: code, actionType: ACTION_TYPE.SELL, price, token });
+                        oqDataMap['offer_' + price] = oqData && oqData.data && Array.isArray(oqData.data.orders) ? oqData.data.orders : [];
+                    })
+                ]);
+                window.lastOrderQueueDataMap = oqDataMap;
+                // Use this result for both drawer and table (show best bid order-queue in drawer)
                 const orderQueueResult = document.getElementById("orderqueue-result");
                 if (orderQueueResult) {
-                    if (oqData) renderCollapsibleJSON(orderQueueResult, oqData);
+                    const bestBid = bidPrices[0];
+                    if (oqDataMap['bid_' + bestBid]) renderCollapsibleJSON(orderQueueResult, oqDataMap['bid_' + bestBid]);
                     else orderQueueResult.textContent = "No order-queue data or request failed.";
                 }
                 const minBidBandarVal = parseInt(minBidBandarInput.value.replace(/\D/g, ""), 10);
                 const minBidBandar = isNaN(minBidBandarVal) ? null : minBidBandarVal;
-                let orderQueueOrders = [];
-                if (oqData && oqData.data && Array.isArray(oqData.data.orders)) {
-                    orderQueueOrders = oqData.data.orders;
-                }
-                updateRowsFromAPI(d.bid || [], d.offer || [], orderQueueOrders, minBidBandar);
+                updateRowsFromAPI(d.bid || [], d.offer || [], oqDataMap, minBidBandar);
                 render();
                 set("infoOpen", d.open);
                 set("infoPrev", d.previous);
@@ -296,11 +304,8 @@ document.addEventListener("DOMContentLoaded", function() {
     function recalcBandarFreqAndRender() {
         const minBidBandarVal = parseInt(minBidBandarInput.value.replace(/\D/g, ""), 10);
         const minBidBandar = isNaN(minBidBandarVal) ? null : minBidBandarVal;
-        // Use cached order-queue data
-        let orderQueueOrders = [];
-        if (window.lastOrderQueueData && window.lastOrderQueueData.data && Array.isArray(window.lastOrderQueueData.data.orders)) {
-            orderQueueOrders = window.lastOrderQueueData.data.orders;
-        }
+        // Use cached order-queue data map
+        let oqDataMap = window.lastOrderQueueDataMap || {};
         // Use cached orderbook data
         let bidArr, offerArr;
         if (window.lastOrderBookData && window.lastOrderBookData.data) {
@@ -321,7 +326,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 price: r.offer
             }));
         }
-        updateRowsFromAPI(bidArr, offerArr, orderQueueOrders, minBidBandar);
+        updateRowsFromAPI(bidArr, offerArr, oqDataMap, minBidBandar);
         render();
     }
     window.recalcBandarFreqAndRender = recalcBandarFreqAndRender;
@@ -329,38 +334,36 @@ document.addEventListener("DOMContentLoaded", function() {
     minBidBandarInput.addEventListener("change", recalcBandarFreqAndRender);
 
     // Helper to update rows from API data, now with bandar freq calculation
-    function updateRowsFromAPI(bidArr, offerArr, orderQueueOrders = [], minBidBandar = null) {
+    function updateRowsFromAPI(bidArr, offerArr, oqDataMap = {}, minBidBandar = null) {
         const maxLen = Math.max(bidArr.length, offerArr.length, VISIBLE_ROWS);
         rows.length = 0;
-        // Calculate bandar freq for each of the top VISIBLE_ROWS bid levels
-        let bidBandarFreqArr = Array(VISIBLE_ROWS).fill('');
-        if (typeof minBidBandar === 'number' && !isNaN(minBidBandar) && Array.isArray(orderQueueOrders) && minBidBandar > 0) {
-            for (let i = 0; i < VISIBLE_ROWS; i++) {
-                const bid = bidArr[i] || {};
-                if (bid.price !== undefined && bid.price !== null && !isNaN(bid.price)) {
-                    // Count orders at this price with lot >= minBidBandar
-                    const freq = orderQueueOrders.filter(o => Number(o.lot) >= minBidBandar && Number(o.price) === Number(bid.price)).length;
-                    bidBandarFreqArr[i] = freq;
-                } else {
-                    bidBandarFreqArr[i] = '';
-                }
-            }
-        }
         for (let i = 0; i < maxLen; i++) {
             const bid = bidArr[i] || {};
             const offer = offerArr[i] || {};
             function clean(val) {
                 return (val === undefined || val === null || isNaN(val)) ? '' : val;
             }
+            // Calculate bandar freq for this bid row using its price's order-queue data
+            let bidBandarFreq = '';
+            if (typeof minBidBandar === 'number' && !isNaN(minBidBandar) && minBidBandar > 0 && bid.price !== undefined && bid.price !== null && !isNaN(bid.price)) {
+                const oqOrders = oqDataMap['bid_' + bid.price] || [];
+                bidBandarFreq = oqOrders.filter(o => Number(o.lot) >= minBidBandar).length;
+            }
+            // Calculate bandar freq for this offer row using its price's order-queue data (SELL)
+            let offerBandarFreq = '';
+            if (typeof minBidBandar === 'number' && !isNaN(minBidBandar) && minBidBandar > 0 && offer.price !== undefined && offer.price !== null && !isNaN(offer.price)) {
+                const oqOrders = oqDataMap['offer_' + offer.price] || [];
+                offerBandarFreq = oqOrders.filter(o => Number(o.lot) >= minBidBandar).length;
+            }
             rows.push({
                 bidStockSplit: clean(bid.stocksplit),
                 bidFreq: clean(bid.que_num),
                 bidLot: clean(bid.volume) ? Math.round(bid.volume / 100) : '',
                 bid: clean(bid.price),
-                bidBandarFreq: (i < VISIBLE_ROWS && bidBandarFreqArr[i] !== '') ? bidBandarFreqArr[i] : '',
+                bidBandarFreq: bidBandarFreq !== '' ? bidBandarFreq : '',
                 offer: clean(offer.price),
                 offerStockSplit: clean(offer.stocksplit),
-                offerBandarFreq: clean(offer.bandar_freq),
+                offerBandarFreq: offerBandarFreq !== '' ? offerBandarFreq : '',
                 offerLot: clean(offer.volume) ? Math.round(offer.volume / 100) : '',
                 offerFreq: clean(offer.que_num)
             });
