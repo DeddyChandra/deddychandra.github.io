@@ -520,22 +520,28 @@ document.addEventListener("DOMContentLoaded", function() {
             function clean(val) {
                 return (val === undefined || val === null || isNaN(val)) ? '' : val;
             }
-            // Calculate bandar freq for this bid row using its price's order-queue data
+            // --- Bid bandar freq ---
             let bidBandarFreq = '';
             let bidOrdersForBandar = [];
             if (bid.price !== undefined && bid.price !== null && !isNaN(bid.price)) {
-                const key = (typeof bid.que_num === 'number' && bid.que_num > ORDER_QUEUE_LIMIT) ? 'bid_' + bid.price + '_sorted' : 'bid_' + bid.price;
-                bidOrdersForBandar = oqDataMap[key] || [];
+                const sortedKey = 'bid_' + bid.price + '_sorted';
+                const unsortedKey = 'bid_' + bid.price;
+                bidOrdersForBandar = oqDataMap[sortedKey] && oqDataMap[sortedKey].length
+                    ? oqDataMap[sortedKey]
+                    : (oqDataMap[unsortedKey] || []);
             }
             if (typeof minBidBandar === 'number' && !isNaN(minBidBandar) && minBidBandar > 0) {
                 bidBandarFreq = bidOrdersForBandar.filter(o => Number(o.lot) >= minBidBandar).length;
             }
-            // Calculate bandar freq for this offer row using its price's order-queue data (SELL)
+            // --- Offer bandar freq ---
             let offerBandarFreq = '';
             let offerOrdersForBandar = [];
             if (offer.price !== undefined && offer.price !== null && !isNaN(offer.price)) {
-                const key = (typeof offer.que_num === 'number' && offer.que_num > ORDER_QUEUE_LIMIT) ? 'offer_' + offer.price + '_sorted' : 'offer_' + offer.price;
-                offerOrdersForBandar = oqDataMap[key] || [];
+                const sortedKey = 'offer_' + offer.price + '_sorted';
+                const unsortedKey = 'offer_' + offer.price;
+                offerOrdersForBandar = oqDataMap[sortedKey] && oqDataMap[sortedKey].length
+                    ? oqDataMap[sortedKey]
+                    : (oqDataMap[unsortedKey] || []);
             }
             if (typeof minBidBandar === 'number' && !isNaN(minBidBandar) && minBidBandar > 0) {
                 offerBandarFreq = offerOrdersForBandar.filter(o => Number(o.lot) >= minBidBandar).length;
