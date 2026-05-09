@@ -365,31 +365,49 @@
         <!-- Case 3: Loan -->
         <article class="case-card reveal">
           <div class="case-media">
-            <div class="case-placeholder">
-              <svg class="case-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 6v2M12 16v2"/></svg>
-              <span data-i18n="cases.c3_placeholder">[Awaiting screenshot: Loan creation form / repayment allocation diagram]</span>
+            <div class="carousel" data-autoplay="4500" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Pompom multi-loan repayment flow">
+              <div class="carousel-viewport">
+                <div class="carousel-track">
+                  <div class="carousel-slide"><span class="carousel-label">Multi-Loan View</span><img src="/assets/img/case-loan-1-list.png" alt="Pompom Tagihan Saya screen — borrower sees all ongoing loans with payment progress, due dates, and outstanding amounts" /></div>
+                  <div class="carousel-slide"><span class="carousel-label">Auto-Allocation</span><img src="/assets/img/case-loan-2-partial.png" alt="Pompom Bayar Sebagian Tagihan screen — pay any partial amount; the backend auto-distributes it across loans starting with the closest due date" loading="lazy" /></div>
+                  <div class="carousel-slide"><span class="carousel-label">Loan Breakdown</span><img src="/assets/img/case-loan-3-detail.png" alt="Pompom Detail Pinjaman screen — real-time breakdown of principal, interest, and late fee for a specific loan installment" loading="lazy" /></div>
+                  <div class="carousel-slide"><span class="carousel-label">Bills Cleared</span><img src="/assets/img/case-loan-4-success.png" alt="Pompom Tagihan Saya empty state after all bills paid — Terima kasih, semua tagihan sudah terbayar" loading="lazy" /></div>
+                </div>
+                <button class="carousel-nav carousel-prev" aria-label="Previous screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+                <button class="carousel-nav carousel-next" aria-label="Next screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+                <div class="carousel-progress" aria-hidden="true"></div>
+              </div>
+              <div class="carousel-controls">
+                <span class="carousel-counter" aria-live="polite">01 / 04</span>
+                <div class="carousel-dots" role="tablist">
+                  <button class="carousel-dot active" aria-label="Show Multi-Loan View"></button>
+                  <button class="carousel-dot" aria-label="Show Auto-Allocation"></button>
+                  <button class="carousel-dot" aria-label="Show Loan Breakdown"></button>
+                  <button class="carousel-dot" aria-label="Show Bills Cleared"></button>
+                </div>
+              </div>
             </div>
           </div>
           <div class="case-body">
             <div class="case-meta">
-              <span data-i18n="cases.c3_meta">FINTECH · LOANS · WORKFLOW</span>
+              <span data-i18n="cases.c3_meta">FINTECH · PAYLATER · POMPOM</span>
               <span class="case-meta-dot"></span>
               <span>2024</span>
             </div>
             <h3 class="case-title" data-i18n="cases.c3_title">Loan Repayment & Creation</h3>
-            <p class="case-summary" data-i18n="cases.c3_summary">Designed Loan Creation with a maker-checker approval workflow and dynamic tenure-based pricing simulation. Built Loan Repayment that auto-allocates partial payments across loans following repayment constraints — eliminating manual ops work.</p>
+            <p class="case-summary" data-i18n="cases.c3_summary">User-facing: Pompom (Traveloka's paylater) borrowers manage multiple ongoing loans, see live principal / interest / late-fee breakdowns, and pay any partial amount — the backend auto-allocates payments across loans starting with the closest due date. Behind the scenes: Loan Creation runs through a maker-checker approval workflow with dynamic tenure-based pricing simulation. Eliminated the manual reconciliation work the ops team used to do for every partial payment.</p>
             <div class="case-impact">
               <div class="case-impact-item">
-                <div class="case-impact-value" data-i18n="cases.c3_imp1_v">Maker-Checker</div>
-                <div class="case-impact-label" data-i18n="cases.c3_imp1_l">Approval workflow</div>
+                <div class="case-impact-value" data-i18n="cases.c3_imp1_v">Auto-Allocate</div>
+                <div class="case-impact-label" data-i18n="cases.c3_imp1_l">Partial pay, by due date</div>
               </div>
               <div class="case-impact-item">
-                <div class="case-impact-value" data-i18n="cases.c3_imp2_v">Auto-alloc</div>
-                <div class="case-impact-label" data-i18n="cases.c3_imp2_l">Repayment engine</div>
+                <div class="case-impact-value" data-i18n="cases.c3_imp2_v">Maker-Checker</div>
+                <div class="case-impact-label" data-i18n="cases.c3_imp2_l">Loan creation flow</div>
               </div>
             </div>
             <div class="tag-row">
-              <span class="tag">Spring Boot</span><span class="tag">PostgreSQL</span><span class="tag">Workflow</span>
+              <span class="tag">Spring Boot</span><span class="tag">PostgreSQL</span><span class="tag">Pompom</span><span class="tag">Workflow</span>
             </div>
           </div>
         </article>
