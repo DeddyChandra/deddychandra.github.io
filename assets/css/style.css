@@ -381,10 +381,13 @@ p { color: var(--text-muted); }
 .hero {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
   padding: 120px 0 80px;
   position: relative;
 }
+.hero > * { width: 100%; max-width: 100%; }
 
 .hero-status {
   display: inline-flex;
