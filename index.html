@@ -307,7 +307,36 @@
         <!-- Case 2: DB Performance -->
         <article class="case-card reveal reveal-delay-1">
           <div class="case-media">
-            <img src="/assets/img/case-db-perf.png" alt="AWS CloudWatch CPU Utilization graph for the corporate-travel Postgres database, showing frequent 18 percent spikes before April 15 collapsing to a steady 6 percent baseline after a query optimization deploy" loading="lazy" />
+            <div class="carousel" data-autoplay="5000" tabindex="0" role="region" aria-roledescription="carousel" aria-label="CloudWatch metrics before and after the April 15 optimization">
+              <div class="carousel-viewport">
+                <div class="carousel-track">
+                  <div class="carousel-slide"><span class="carousel-label">CPU Utilization</span><img src="/assets/img/case-db-2-cpu.png" alt="CloudWatch CPU Utilization — frequent 18%+ spikes pre-April 15 collapse to a steady ~6% baseline after" /></div>
+                  <div class="carousel-slide"><span class="carousel-label">DB Load</span><img src="/assets/img/case-db-1-load.png" alt="CloudWatch DBLoad metric — heavy spikes pre-April 15 fall to near-zero after" loading="lazy" /></div>
+                  <div class="carousel-slide"><span class="carousel-label">DB Load (CPU)</span><img src="/assets/img/case-db-8-load-cpu.png" alt="CloudWatch DBLoadCPU — sustained CPU contention pre-April 15 normalizes after" loading="lazy" /></div>
+                  <div class="carousel-slide"><span class="carousel-label">Total IOPS</span><img src="/assets/img/case-db-3-iops-total.png" alt="CloudWatch TotalIOPS — read/write IOPS spikes pre-April 15 drop dramatically after" loading="lazy" /></div>
+                  <div class="carousel-slide"><span class="carousel-label">Read IOPS</span><img src="/assets/img/case-db-7-iops-read.png" alt="CloudWatch ReadIOPS — read IOPS load before and after the schema fix" loading="lazy" /></div>
+                  <div class="carousel-slide"><span class="carousel-label">Read Throughput</span><img src="/assets/img/case-db-6-throughput.png" alt="CloudWatch ReadThroughput — bytes/second falls off after April 15" loading="lazy" /></div>
+                  <div class="carousel-slide"><span class="carousel-label">Disk Queue Depth</span><img src="/assets/img/case-db-4-queue.png" alt="CloudWatch DiskQueueDepth — disk pressure normalizes after April 15" loading="lazy" /></div>
+                  <div class="carousel-slide"><span class="carousel-label">EBS Byte Balance %</span><img src="/assets/img/case-db-5-ebs.png" alt="CloudWatch EBSByteBalance% — frequent 0% dips disappear after April 15, holding steady at 100%" loading="lazy" /></div>
+                </div>
+                <button class="carousel-nav carousel-prev" aria-label="Previous metric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+                <button class="carousel-nav carousel-next" aria-label="Next metric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+                <div class="carousel-progress" aria-hidden="true"></div>
+              </div>
+              <div class="carousel-controls">
+                <span class="carousel-counter" aria-live="polite">01 / 08</span>
+                <div class="carousel-dots" role="tablist">
+                  <button class="carousel-dot active" aria-label="Show CPU Utilization"></button>
+                  <button class="carousel-dot" aria-label="Show DB Load"></button>
+                  <button class="carousel-dot" aria-label="Show DB Load CPU"></button>
+                  <button class="carousel-dot" aria-label="Show Total IOPS"></button>
+                  <button class="carousel-dot" aria-label="Show Read IOPS"></button>
+                  <button class="carousel-dot" aria-label="Show Read Throughput"></button>
+                  <button class="carousel-dot" aria-label="Show Disk Queue Depth"></button>
+                  <button class="carousel-dot" aria-label="Show EBS Byte Balance"></button>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="case-body">
             <div class="case-meta">
@@ -316,7 +345,7 @@
               <span>Apr 2026</span>
             </div>
             <h3 class="case-title" data-i18n="cases.c2_title">Postgres Query Optimization</h3>
-            <p class="case-summary" data-i18n="cases.c2_summary">The CloudWatch chart above tells the story. On April 15, a one-line fix for a data-type mismatch on the join column unlocked Index Scans for a corporate-travel Postgres query — dropping latency from 7,969 ms → 0.057 ms and collapsing sustained DB CPU from frequent 18%+ spikes down to a steady ~6%.</p>
+            <p class="case-summary" data-i18n="cases.c2_summary">Every CloudWatch chart above shows the same April 15. A one-line fix for a data-type mismatch on the join column unlocked Postgres Index Scans for a corporate-travel query — CPU collapsed from 18%+ spikes to a steady ~6%, DB load and IOPS cratered, disk queue normalized, and EBS byte balance stopped dipping to 0%. Query latency: 7,969 ms → 0.057 ms.</p>
             <div class="case-impact">
               <div class="case-impact-item">
                 <div class="case-impact-value" data-i18n="cases.c2_imp1_v">7,969 → 0.057</div>

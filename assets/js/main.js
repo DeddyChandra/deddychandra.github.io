@@ -81,5 +81,82 @@
     document.querySelectorAll('[data-year]').forEach((el) => {
       el.textContent = new Date().getFullYear();
     });
+
+    // ---- Carousels ----
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('.carousel').forEach((root) => {
+      const track = root.querySelector('.carousel-track');
+      const slides = root.querySelectorAll('.carousel-slide');
+      const dots = root.querySelectorAll('.carousel-dot');
+      const counter = root.querySelector('.carousel-counter');
+      const progress = root.querySelector('.carousel-progress');
+      const prev = root.querySelector('.carousel-prev');
+      const next = root.querySelector('.carousel-next');
+      const total = slides.length;
+      const interval = parseInt(root.dataset.autoplay, 10) || 0;
+      let current = 0;
+      let timer = null;
+      let progressStart = null;
+
+      function go(i) {
+        current = ((i % total) + total) % total;
+        track.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, idx) => d.classList.toggle('active', idx === current));
+        if (counter) counter.textContent = `${String(current + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+      }
+
+      function startProgress() {
+        if (!progress) return;
+        progress.style.transition = 'none';
+        progress.style.width = '0%';
+        // Force reflow so the next assignment animates
+        // eslint-disable-next-line no-unused-expressions
+        progress.offsetWidth;
+        progress.style.transition = `width ${interval}ms linear`;
+        progress.style.width = '100%';
+        progressStart = Date.now();
+      }
+      function clearProgress() {
+        if (!progress) return;
+        progress.style.transition = 'none';
+        progress.style.width = '0%';
+      }
+
+      function play() {
+        if (!interval || reducedMotion) return;
+        stop();
+        startProgress();
+        timer = setTimeout(() => {
+          go(current + 1);
+          play();
+        }, interval);
+      }
+      function stop() {
+        if (timer) { clearTimeout(timer); timer = null; }
+        clearProgress();
+      }
+
+      if (prev) prev.addEventListener('click', () => { stop(); go(current - 1); play(); });
+      if (next) next.addEventListener('click', () => { stop(); go(current + 1); play(); });
+      dots.forEach((d, idx) => d.addEventListener('click', () => { stop(); go(idx); play(); }));
+
+      // Pause on hover / focus, keyboard nav when focused
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', play);
+      root.addEventListener('focusin', stop);
+      root.addEventListener('focusout', play);
+      root.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { stop(); go(current - 1); play(); }
+        if (e.key === 'ArrowRight') { stop(); go(current + 1); play(); }
+      });
+
+      // Pause when tab is hidden
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stop(); else play();
+      });
+
+      go(0);
+      play();
+    });
   });
 })();

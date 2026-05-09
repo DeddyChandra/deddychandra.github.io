@@ -94,7 +94,7 @@
     "c1_placeholder": "[等待截图:保险结算流程 / 架构图 / 收入仪表板]",
     "c2_meta": "数据库 · POSTGRES · AWS RDS",
     "c2_title": "Postgres 查询优化",
-    "c2_summary": "上方的 CloudWatch 曲线就是答案。4 月 15 日,通过修复 join 列上的数据类型不匹配(只改一行),让企业差旅 Postgres 查询重新走 Index Scan — 查询延迟从 7,969 ms 降至 0.057 ms,数据库 CPU 也从频繁的 18%+ 尖峰回落到稳定的 ~6%。",
+    "c2_summary": "上方每一张 CloudWatch 曲线都指向同一个日子:4 月 15 日。一行 schema 修复 — 解决 join 列的数据类型不匹配 — 让企业差旅 Postgres 查询重新走 Index Scan:CPU 从频繁的 18%+ 尖峰回落到稳定 ~6%,DB load 与 IOPS 同时跌落,Disk Queue 趋于平稳,EBS byte balance 不再跌至 0%。查询延迟:7,969 ms → 0.057 ms。",
     "c2_imp1_v": "7,969 → 0.057",
     "c2_imp1_l": "毫秒延迟",
     "c2_imp2_v": "99%",

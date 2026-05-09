@@ -94,7 +94,7 @@
     "c1_placeholder": "[Awaiting screenshot: Insurance checkout flow / architecture diagram / revenue dashboard]",
     "c2_meta": "DATABASE · POSTGRES · AWS RDS",
     "c2_title": "Postgres Query Optimization",
-    "c2_summary": "The CloudWatch chart above tells the story. On April 15, a one-line fix for a data-type mismatch on the join column unlocked Index Scans for a corporate-travel Postgres query — dropping latency from 7,969 ms → 0.057 ms and collapsing sustained DB CPU from frequent 18%+ spikes down to a steady ~6%.",
+    "c2_summary": "Every CloudWatch chart above shows the same April 15. A one-line fix for a data-type mismatch on the join column unlocked Postgres Index Scans for a corporate-travel query — CPU collapsed from 18%+ spikes to a steady ~6%, DB load and IOPS cratered, disk queue normalized, and EBS byte balance stopped dipping to 0%. Query latency: 7,969 ms → 0.057 ms.",
     "c2_imp1_v": "7,969 → 0.057",
     "c2_imp1_l": "ms latency",
     "c2_imp2_v": "99%",

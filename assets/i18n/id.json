@@ -94,7 +94,7 @@
     "c1_placeholder": "[Menunggu screenshot: Alur checkout asuransi / diagram arsitektur / dashboard revenue]",
     "c2_meta": "DATABASE · POSTGRES · AWS RDS",
     "c2_title": "Optimasi Query Postgres",
-    "c2_summary": "Grafik CloudWatch di atas menceritakan semuanya. Pada 15 April, satu baris perbaikan untuk ketidakcocokan tipe data pada kolom join membuka Index Scan untuk query corporate-travel Postgres — latensi turun dari 7.969 ms → 0,057 ms dan CPU database yang sebelumnya sering spike 18%+ langsung jatuh ke baseline stabil ~6%.",
+    "c2_summary": "Setiap grafik CloudWatch di atas menunjuk ke tanggal yang sama: 15 April. Satu baris perbaikan untuk ketidakcocokan tipe data pada kolom join membuka Index Scan untuk query corporate-travel Postgres — CPU jatuh dari spike 18%+ ke baseline stabil ~6%, DB load dan IOPS anjlok, disk queue normal, dan EBS byte balance berhenti dip ke 0%. Latensi query: 7.969 ms → 0,057 ms.",
     "c2_imp1_v": "7.969 → 0,057",
     "c2_imp1_l": "ms latensi",
     "c2_imp2_v": "99%",
