@@ -1,586 +1,600 @@
 <!DOCTYPE html>
-<html lang="en-US">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Deddy Chandra portfolio</title>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet">
-<!--    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="css/aos.css?ver=1.1.0" rel="stylesheet">
-    <link href="css/bootstrap.min.css?ver=1.1.0" rel="stylesheet">
-    <link href="css/main.css?ver=1.1.0" rel="stylesheet">
-    <noscript>
-      <style type="text/css">
-        [data-aos] {
-            opacity: 1 !important;
-            transform: translate(0) scale(1) !important;
-        }
-      </style>
-    </noscript>
-  </head>
-  <body id="top">
-    <header>
-      <div class="profile-page sidebar-collapse">
-        <nav class="navbar navbar-expand-lg fixed-top navbar-transparent bg-primary" color-on-scroll="400">
-          <div class="container">
-            <div class="navbar-translate">
-              <button class="navbar-toggler navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-bar bar1"></span><span class="navbar-toggler-bar bar2"></span><span class="navbar-toggler-bar bar3"></span></button>
-            </div>
-            <div class="collapse navbar-collapse justify-content-end" id="navigation">
-              <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link smooth-scroll" href="#about">About</a></li>
-                <li class="nav-item"><a class="nav-link smooth-scroll" href="#skill">Skills</a></li>
-                <li class="nav-item"><a class="nav-link smooth-scroll" href="#portfolio">Portfolio</a></li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-      </div>
-    </header>
-    <div class="page-content">
-      <div>
-<div class="profile-page">
-  <div class="wrapper">
-    <div class="page-header page-header-small" filter-color="green">
-      <div class="page-header-image" data-parallax="true" style="background-image: url('images/background.jpg')"></div>
-      <div class="container">
-        <div class="content-center">
-          <div class="cc-profile-image"><a href="#"><img src="images/DeddyChandra.jpg" alt="Image"/></a></div>
-          <div class="h2 title">Deddy Chandra</div>
-          <p class="category text-white">Web Developer, Gamers,  Buddhist</p>
-          <!-- <a class="btn btn-primary smooth-scroll mr-2" href="#contact" data-aos="zoom-in" data-aos-anchor="data-aos-anchor">Hire Me</a><a class="btn btn-primary" href="#" data-aos="zoom-in" data-aos-anchor="data-aos-anchor">Download CV</a> -->
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="meta.title">Deddy Chandra — Senior Software Engineer</title>
+  <meta name="description" data-i18n-attr="content:meta.description"
+    content="Senior Software Engineer at Traveloka. 4+ years building high-scale fintech, corporate travel, and event-driven backend systems." />
+  <meta name="author" content="Deddy Chandra" />
+  <meta name="theme-color" content="#07090f" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Deddy Chandra — Senior Software Engineer" />
+  <meta property="og:description" content="Senior Software Engineer at Traveloka. Fintech, AWS, microservices, ICPC alum." />
+  <meta property="og:url" content="https://deddychandra.github.io/" />
+  <meta property="og:image" content="https://deddychandra.github.io/assets/img/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Deddy Chandra — Senior Software Engineer" />
+  <meta name="twitter:description" content="Senior Software Engineer at Traveloka. Fintech, AWS, microservices, ICPC alum." />
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <link rel="alternate icon" href="/assets/img/favicon.svg" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/style.css" />
+
+  <!-- Theme applied early to avoid FOUC -->
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body id="top">
+
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="glow-bg" aria-hidden="true"></div>
+
+  <!-- ============== NAV ============== -->
+  <nav class="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <a href="#top" class="nav-brand" aria-label="Deddy Chandra — Home">
+        <span class="nav-brand-mark">DC</span>
+        <span>Deddy Chandra</span>
+      </a>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a class="nav-link" href="#about" data-num="01." data-i18n="nav.about">About</a></li>
+        <li><a class="nav-link" href="#experience" data-num="02." data-i18n="nav.experience">Experience</a></li>
+        <li><a class="nav-link" href="#work" data-num="03." data-i18n="nav.work">Work</a></li>
+        <li><a class="nav-link" href="#stack" data-num="04." data-i18n="nav.stack">Stack</a></li>
+        <li><a class="nav-link" href="#projects" data-num="05." data-i18n="nav.projects">Projects</a></li>
+        <li><a class="nav-link" href="/blog/" data-num="·" data-i18n="nav.blog">Blog</a></li>
+        <li><a class="nav-link" href="/now.html" data-num="·" data-i18n="nav.now">Now</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="zh">中</button>
+          <button class="lang-btn" data-lang="id">ID</button>
         </div>
-      </div>
-<!--      <div class="section">-->
-<!--        <div class="container">-->
-<!--          <div class="button-container">-->
-<!--            <a class="btn btn-default btn-round btn-lg btn-icon" href="https://www.facebook.com/deddy.chandra007" rel="tooltip" title="Follow me on Facebook"><i class="fa fa-facebook"></i></a>-->
-<!--            <a class="btn btn-default btn-round btn-lg btn-icon" href="https://twitter.com/DeddyChandra007" rel="tooltip" title="Follow me on Twitter"><i class="fa fa-twitter"></i></a>-->
-<!--            <a class="btn btn-default btn-round btn-lg btn-icon" href="https://www.instagram.com/deddychandra__/" rel="tooltip" title="Follow me on Instagram"><i class="fa fa-instagram"></i></a>-->
-<!--            <a class="btn btn-default btn-round btn-lg btn-icon" href="https://www.github.com/deddychandra" rel="tooltip" title="My Github page"><i class="fa fa-github"></i></a>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-    </div>
-  </div>
-</div>
-<div class="section" id="about">
-  <div class="container">
-    <div class="card" data-aos="fade-up" data-aos-offset="10">
-      <div class="row">
-        <div class="col-lg-6 col-md-12">
-          <div class="card-body">
-            <div class="h4 mt-0 title">About</div>
-            <p>Hello! I am Deddy Chandra.</p>
-            <p>Have participated in the INC (Indonesia National Competition) in 2020 got Rank 41 and the ICPC Asia Jakarta Regional Contest 2020</p>
-            <div class="row mt-3">
-              <div class="col-sm-4"><strong class="text-uppercase">Instagram:</strong></div>
-              <div class="col-sm-8">
-                <a href="https://www.instagram.com/deddychandra__" target="_blank">
-                  <i class="fab fa-instagram"></i> Deddy Chandra
-                </a>
-              </div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-sm-4"><strong class="text-uppercase">LinkedIn:</strong></div>
-              <div class="col-sm-8">
-                <a href="https://www.linkedin.com/in/deddychandra/" target="_blank">
-                  <i class="fab fa-linkedin"></i> Deddy Chandra
-                </a>
-              </div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-sm-4"><strong class="text-uppercase">GitHub:</strong></div>
-              <div class="col-sm-8">
-                <a href="https://github.com/DeddyChandra" target="_blank">
-                  <i class="fab fa-github"></i> Deddy Chandra
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6 col-md-12">
-          <div class="card-body">
-            <div class="h4 mt-0 title">Basic Information</div>
-            <div class="row">
-              <div class="col-sm-4"><strong class="text-uppercase">Age:</strong></div>
-              <div class="col-sm-8" id="age"></div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-sm-4"><strong class="text-uppercase">Email:</strong></div>
-              <div class="col-sm-8">deddychandra678@gmail.com</div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-sm-4"><strong class="text-uppercase">Phone:</strong></div>
-              <div class="col-sm-8">secret</div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-sm-4"><strong class="text-uppercase">Address:</strong></div>
-              <div class="col-sm-8">Karimun Regency, Riau Islands</div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-sm-4"><strong class="text-uppercase">Language:</strong></div>
-              <div class="col-sm-8">Mandarin, Teo-chew, Indonesian, English</div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-sm-4"><strong class="text-uppercase">Intern:</strong></div>
-              <div class="col-sm-8">PT DNARTWORKS INDONESIA as Software Engineer</div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-sm-4"><strong class="text-uppercase">Work:</strong></div>
-              <div class="col-sm-8">Traveloka - Backend Engineer - FinTech</div>
-            </div>
-          </div>
-        </div>
+        <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+        </button>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
       </div>
     </div>
-  </div>
-</div>
-<div class="section" id="life-achievements">
-  <div class="container">
-    <div class="h4 text-center mb-4 title">Life Achievements</div>
-    <div class="card" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="progress-container progress-primary">
-              <span class="progress-badge">Vesak in Borobudur</span>
-              <i class="fas fa-check"></i>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="progress-container progress-primary">
-              <span class="progress-badge">去中国 - 宋大峰祖师</span>
-              <i class="fas fa-spinner fa-pulse"></i>
-            </div>
-          </div>
+  </nav>
+
+  <!-- ============== HERO ============== -->
+  <header class="hero container">
+    <div class="reveal">
+      <span class="hero-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span data-i18n="hero.status">Currently @ Traveloka — Software Engineer III</span>
+      </span>
+    </div>
+
+    <p class="hero-greeting reveal reveal-delay-1" data-i18n="hero.greeting">$ Hi, I'm</p>
+    <h1 class="hero-name reveal reveal-delay-1" data-i18n="hero.name">Deddy Chandra.</h1>
+
+    <h2 class="hero-role reveal reveal-delay-2">
+      <span data-i18n="hero.role_pre">I build</span>
+      <span class="accent" data-i18n="hero.role_accent">fintech systems</span>
+      <span data-i18n="hero.role_post">that scale.</span>
+    </h2>
+
+    <p class="hero-tagline reveal reveal-delay-3" data-i18n="hero.tagline">
+      Senior Software Engineer with 4+ years shipping high-scale Spring Boot monoliths, microservices, and event-driven services across financial services and corporate travel at Traveloka.
+    </p>
+
+    <div class="hero-cta reveal reveal-delay-3">
+      <a class="btn btn-primary" href="/assets/files/Deddy_Chandra_CV.pdf" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span data-i18n="hero.cta_primary">View Resume</span>
+      </a>
+      <a class="btn btn-ghost" href="#contact">
+        <span data-i18n="hero.cta_secondary">Get in Touch</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="hero-socials reveal reveal-delay-4">
+      <a class="icon-btn" href="https://github.com/DeddyChandra" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.4.5 0 5.9 0 12.5c0 5.3 3.4 9.8 8.2 11.4.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2.9-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.6 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.8-1.6 8.2-6.1 8.2-11.4C24 5.9 18.6.5 12 .5z"/></svg>
+      </a>
+      <a class="icon-btn" href="https://linkedin.com/in/deddychandra" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+      </a>
+      <a class="icon-btn" href="mailto:deddychandra678@gmail.com" aria-label="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </a>
+      <a class="icon-btn" href="https://icpc.global/ICPCID/W9SWRY5YEXTT" target="_blank" rel="noopener" aria-label="ICPC profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg>
+      </a>
+    </div>
+
+    <div class="hero-meta reveal reveal-delay-4">
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span data-i18n="hero.meta_loc">Jakarta, Indonesia</span>
+      </span>
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        <span data-i18n="hero.meta_role">Software Engineer III</span>
+      </span>
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+        <span data-i18n="hero.meta_company">Financial Services & Corporate Travel</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- ============== STATS ============== -->
+  <section class="stats" aria-label="Impact metrics">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat reveal">
+          <div class="stat-value" data-i18n="stats.rev_v">$200K</div>
+          <div class="stat-label" data-i18n="stats.rev_l">Revenue generated from Flight Insurance Add-ons in year one</div>
         </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="progress-container progress-primary">
-              <span class="progress-badge">Nusa Penida Traveling, with A</span>
-              <i class="fas fa-spinner fa-pulse"></i>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="progress-container progress-primary">
-              <span class="progress-badge">Royal Caribbean - Spectrum of the seas</span>
-              <i class="fas fa-spinner fa-pulse"></i>
-            </div>
-          </div>
+        <div class="stat reveal reveal-delay-1">
+          <div class="stat-value" data-i18n="stats.perf_v">99%</div>
+          <div class="stat-label" data-i18n="stats.perf_l">DB query latency reduced (7,969ms → 0.057ms)</div>
         </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="progress-container progress-primary">
-              <span class="progress-badge">Scenic Train Rides</span>
-              <i class="fas fa-spinner fa-pulse"></i>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="progress-container progress-primary">
-              <span class="progress-badge">DOTA 2 - The International</span>
-              <i class="fas fa-spinner fa-pulse"></i>
-            </div>
-          </div>
+        <div class="stat reveal reveal-delay-2">
+          <div class="stat-value" data-i18n="stats.ops_v">60%</div>
+          <div class="stat-label" data-i18n="stats.ops_l">Manual ops time eliminated via invoice automation</div>
         </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="progress-container progress-primary">
-              <span class="progress-badge">Aquascape</span>
-              <i class="fas fa-spinner fa-pulse"></i>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="progress-container progress-primary">
-              <span class="progress-badge">Seribu Island Snorkeling </span>
-              <i class="fas fa-check"></i>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="progress-container progress-primary">
-              <span class="progress-badge">TBD</span>
-              <i class="fas fa-spinner fa-pulse"></i>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="progress-container progress-primary">
-              <span class="progress-badge">TBD</span>
-              <i class="fas fa-spinner fa-pulse"></i>
-            </div>
-          </div>
+        <div class="stat reveal reveal-delay-3">
+          <div class="stat-value" data-i18n="stats.sec_v">0</div>
+          <div class="stat-label" data-i18n="stats.sec_l">Critical CVEs as Corporate Travel DevSecOps champion</div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-<div class="section" id="skill">
-  <div class="container">
-    <div class="h4 text-center mb-4 title">Professional Skills</div>
-    <div class="card" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="progress-container progress-primary"><span class="progress-badge">Java</span>
-              <div class="progress">
-                <div class="progress-bar progress-bar-primary" data-aos="progress-full" data-aos-offset="10" data-aos-duration="2000" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div><span class="progress-value">75%</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="progress-container progress-primary"><span class="progress-badge">PHP</span>
-              <div class="progress">
-                <div class="progress-bar progress-bar-primary" data-aos="progress-full" data-aos-offset="10" data-aos-duration="2000" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div><span class="progress-value">80%</span>
-              </div>
-            </div>
-          </div>
+  </section>
+
+  <!-- ============== ABOUT ============== -->
+  <section id="about">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-eyebrow" data-i18n="about.eyebrow">// about</p>
+        <h2 class="section-title" data-i18n="about.title">About me</h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p data-i18n-html="about.p1">
+            I'm a <strong>Senior Software Engineer</strong> at <strong>Traveloka</strong> on the Financial Services &amp; Corporate Travel teams. For 4+ years I've designed and built systems that handle real money and real travel for thousands of corporate clients — from <strong>Flight Insurance</strong> add-ons to <strong>Loan Repayment</strong> workflows to <strong>automated invoicing</strong>.
+          </p>
+          <p data-i18n-html="about.p2">
+            My day-to-day mixes <strong>Spring Boot</strong>, <strong>microservices</strong>, <strong>event-driven architectures</strong>, and <strong>AWS</strong> infrastructure managed via Terraform. I care a lot about <strong>system design</strong>, query performance, secure dependencies, and mentoring teammates into sharper engineers.
+          </p>
+          <p data-i18n-html="about.p3">
+            Before Traveloka I interned at <strong>DNArtworks</strong> shipping brand sites for Vespa and Piaggio, and spent two years assisting at <strong>Parahyangan Catholic University</strong>. I'm an <strong>ICPC Asia Regional</strong> alum (Rank 10) and a continuous AWS learner.
+          </p>
         </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="progress-container progress-primary"><span class="progress-badge">HTML</span>
-              <div class="progress">
-                <div class="progress-bar progress-bar-primary" data-aos="progress-full" data-aos-offset="10" data-aos-duration="2000" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div><span class="progress-value">80%</span>
-              </div>
-            </div>
+
+        <aside class="about-card reveal reveal-delay-1">
+          <p class="about-card-title" data-i18n="about.card_title">// quick info</p>
+          <div class="info-row">
+            <span class="label" data-i18n="about.i_based_l">Based in</span>
+            <span class="value" data-i18n="about.i_based_v">Jakarta, Indonesia</span>
           </div>
-          <div class="col-md-6">
-            <div class="progress-container progress-primary"><span class="progress-badge">CSS</span>
-              <div class="progress">
-                <div class="progress-bar progress-bar-primary" data-aos="progress-full" data-aos-offset="10" data-aos-duration="2000" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div><span class="progress-value">80%</span>
-              </div>
-            </div>
+          <div class="info-row">
+            <span class="label" data-i18n="about.i_role_l">Current role</span>
+            <span class="value" data-i18n="about.i_role_v">SWE III @ Traveloka</span>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="progress-container progress-primary"><span class="progress-badge">JavaScript</span>
-              <div class="progress">
-                <div class="progress-bar progress-bar-primary" data-aos="progress-full" data-aos-offset="10" data-aos-duration="2000" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 85%;"></div><span class="progress-value">85%</span>
-              </div>
-            </div>
+          <div class="info-row">
+            <span class="label" data-i18n="about.i_yoe_l">Experience</span>
+            <span class="value"><span id="auto-yoe">4+</span>&nbsp;<span data-i18n="about.i_yoe_v">years in production</span></span>
           </div>
-          <div class="col-md-6">
-            <div class="progress-container progress-primary"><span class="progress-badge">C++</span>
-              <div class="progress">
-                <div class="progress-bar progress-bar-primary" data-aos="progress-full" data-aos-offset="10" data-aos-duration="2000" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 65%;"></div><span class="progress-value">65%</span>
-              </div>
-            </div>
+          <div class="info-row">
+            <span class="label" data-i18n="about.i_lang_l">Languages</span>
+            <span class="value" data-i18n="about.i_lang_v">Mandarin · English · Bahasa</span>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="progress-container progress-primary"><span class="progress-badge">Photoshop</span>
-              <div class="progress">
-                <div class="progress-bar progress-bar-primary" data-aos="progress-full" data-aos-offset="10" data-aos-duration="2000" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 30%;"></div><span class="progress-value">30%</span>
-              </div>
-            </div>
+          <div class="info-row">
+            <span class="label" data-i18n="about.i_status_l">Status</span>
+            <span class="value text-accent" data-i18n="about.i_status_v">Open to conversations</span>
           </div>
-          <div class="col-md-6">
-            <div class="progress-container progress-primary"><span class="progress-badge">Video Editing</span>
-              <div class="progress">
-                <div class="progress-bar progress-bar-primary" data-aos="progress-full" data-aos-offset="10" data-aos-duration="2000" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 30%;"></div><span class="progress-value">30%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="progress-container progress-primary"><span class="progress-badge">CodeIgniter</span>
-              <div class="progress">
-                <div class="progress-bar progress-bar-primary" data-aos="progress-full" data-aos-offset="10" data-aos-duration="2000" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 40%;"></div><span class="progress-value">40%</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="progress-container progress-primary"><span class="progress-badge">Laravel</span>
-              <div class="progress">
-                <div class="progress-bar progress-bar-primary" data-aos="progress-full" data-aos-offset="10" data-aos-duration="2000" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 70%;"></div><span class="progress-value">70%</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        </aside>
       </div>
     </div>
-  </div>
-</div>
-<div class="section" id="portfolio">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 ml-auto mr-auto">
-        <div class="h4 text-center mb-4 title">Portfolio</div>
-        <div class="nav-align-center">
-          <ul class="nav nav-pills nav-pills-primary" role="tablist">
-            <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#web-development" role="tablist"><i class="fa fa-laptop" aria-hidden="true"></i></a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#graphic-design" role="tablist"><i class="fa fa-picture-o" aria-hidden="true"></i></a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Photography" role="tablist"><i class="fa fa-camera" aria-hidden="true"></i></a></li>
+  </section>
+
+  <!-- ============== EXPERIENCE ============== -->
+  <section id="experience">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-eyebrow" data-i18n="exp.eyebrow">// career</p>
+        <h2 class="section-title" data-i18n="exp.title">Where I've worked</h2>
+      </div>
+
+      <div class="timeline mt-6">
+        <article class="timeline-item reveal">
+          <div class="timeline-period" data-i18n="exp.tl_period">Jun 2022 — Present</div>
+          <h3 class="timeline-role" data-i18n="exp.tl_role">Software Engineer II → III</h3>
+          <p class="timeline-company" data-i18n-html="exp.tl_company"><strong>Traveloka</strong> · Financial Services &amp; Corporate Travel</p>
+          <ul class="timeline-list">
+            <li data-i18n-html="exp.tl_b1"><strong>Led system design and implementation of Flight Insurance Add-ons</strong> on AWS — generated <strong>USD 200K net revenue</strong> and <strong>14.45% attachment rate</strong> for corporate flight purchases in year one.</li>
+            <li data-i18n-html="exp.tl_b2"><strong>Optimized database performance by 99%</strong> by resolving data-type mismatches forcing Parallel Seq Scans — reduced query latency from <strong>7,969 ms → 0.057 ms</strong> via efficient Index Scan utilization.</li>
+            <li data-i18n-html="exp.tl_b3">Designed and shipped <strong>Loan Repayment, Loan Creation</strong> (with maker-checker workflow & tenure simulation), and <strong>Loan Insurance</strong> features integrating third-party providers.</li>
+            <li data-i18n-html="exp.tl_b4">Built an <strong>automated Hardcopy invoice generation tool</strong> for internal Ops — reduced manual processing by <strong>60%</strong> and improved billing efficiency.</li>
+            <li data-i18n-html="exp.tl_b5">Acted as <strong>Corporate Travel DevSecOps Champion</strong> — drove dependency security initiatives, brought critical vulnerabilities to <strong>zero</strong> via continuous monitoring, patching, and quarterly audits.</li>
+            <li data-i18n-html="exp.tl_b6"><strong>Mentored junior engineers</strong>, raising code quality, productivity, and PR discipline.</li>
           </ul>
+          <div class="timeline-tags">
+            <span class="tag">Java</span><span class="tag">Spring Boot</span><span class="tag">AWS</span><span class="tag">PostgreSQL</span><span class="tag">Terraform</span><span class="tag">Kotlin</span>
+          </div>
+        </article>
+
+        <article class="timeline-item reveal">
+          <div class="timeline-period" data-i18n="exp.dn_period">Jan 2022 — Jun 2022</div>
+          <h3 class="timeline-role" data-i18n="exp.dn_role">Fullstack Developer Intern</h3>
+          <p class="timeline-company" data-i18n-html="exp.dn_company"><strong>DNArtworks</strong> · Jakarta, Indonesia</p>
+          <ul class="timeline-list">
+            <li data-i18n-html="exp.dn_b1">Built <strong>company websites</strong> for Vespa, Piaggio, Aprilia, and Moto Guzzi (Indonesia) end-to-end.</li>
+            <li data-i18n-html="exp.dn_b2">Stack: CodeIgniter (backend), Bootstrap (frontend), MySQL, Docker, GitLab CI.</li>
+          </ul>
+          <div class="timeline-tags">
+            <span class="tag">PHP</span><span class="tag">CodeIgniter</span><span class="tag">MySQL</span><span class="tag">Docker</span>
+          </div>
+        </article>
+
+        <article class="timeline-item reveal">
+          <div class="timeline-period" data-i18n="exp.un_period">Jan 2020 — Jan 2022</div>
+          <h3 class="timeline-role" data-i18n="exp.un_role">Lecturer Assistant</h3>
+          <p class="timeline-company" data-i18n-html="exp.un_company"><strong>Parahyangan Catholic University</strong> · Bandung</p>
+          <ul class="timeline-list">
+            <li data-i18n-html="exp.un_b1">Assisted teaching: <strong>Algorithm & Data Structure, Computer Graphics, Mobile Programming, Computational Thinking, Information & Database Management</strong>.</li>
+          </ul>
+          <div class="timeline-tags">
+            <span class="tag">C++</span><span class="tag">Java</span><span class="tag">Algorithms</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== CASE STUDIES ============== -->
+  <section id="work">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-eyebrow" data-i18n="cases.eyebrow">// case studies</p>
+        <h2 class="section-title" data-i18n="cases.title">Selected work</h2>
+        <p class="section-subtitle" data-i18n="cases.subtitle">Deeper dives into systems I've designed, shipped, and scaled — with the metrics that mattered.</p>
+      </div>
+
+      <div class="cases-grid">
+        <!-- Case 1: Flight Insurance -->
+        <article class="case-card reveal">
+          <div class="case-media">
+            <div class="case-placeholder">
+              <svg class="case-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span data-i18n="cases.c1_placeholder">[Awaiting screenshot: Insurance checkout flow / architecture diagram / revenue dashboard]</span>
+            </div>
+          </div>
+          <div class="case-body">
+            <div class="case-meta">
+              <span data-i18n="cases.c1_meta">FINTECH · INSURANCE · AWS</span>
+              <span class="case-meta-dot"></span>
+              <span>2023</span>
+            </div>
+            <h3 class="case-title" data-i18n="cases.c1_title">Flight Insurance Add-ons</h3>
+            <p class="case-summary" data-i18n="cases.c1_summary">End-to-end system design for an insurance add-on at the flight checkout step for corporate travelers. Integrated third-party insurance providers, handled async issuance via SQS, and built operational dashboards for ops teams.</p>
+            <div class="case-impact">
+              <div class="case-impact-item">
+                <div class="case-impact-value" data-i18n="cases.c1_imp1_v">$200K</div>
+                <div class="case-impact-label" data-i18n="cases.c1_imp1_l">Net revenue, year one</div>
+              </div>
+              <div class="case-impact-item">
+                <div class="case-impact-value" data-i18n="cases.c1_imp2_v">14.45%</div>
+                <div class="case-impact-label" data-i18n="cases.c1_imp2_l">Attachment rate</div>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">Spring Boot</span><span class="tag">AWS SQS</span><span class="tag">Lambda</span><span class="tag">PostgreSQL</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Case 2: DB Performance -->
+        <article class="case-card reveal reveal-delay-1">
+          <div class="case-media">
+            <div class="case-placeholder">
+              <svg class="case-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"/></svg>
+              <span data-i18n="cases.c2_placeholder">[Awaiting screenshot: Datadog APM showing latency drop, EXPLAIN ANALYZE before/after]</span>
+            </div>
+          </div>
+          <div class="case-body">
+            <div class="case-meta">
+              <span data-i18n="cases.c2_meta">DATABASE · PERFORMANCE</span>
+              <span class="case-meta-dot"></span>
+              <span>2024</span>
+            </div>
+            <h3 class="case-title" data-i18n="cases.c2_title">Postgres Query Optimization</h3>
+            <p class="case-summary" data-i18n="cases.c2_summary">Diagnosed a slow corporate-travel query running Parallel Seq Scans on a multi-million-row table. Root cause: a data-type mismatch on the join column blocking Index Scans. Patched the schema and reclaimed orders-of-magnitude latency.</p>
+            <div class="case-impact">
+              <div class="case-impact-item">
+                <div class="case-impact-value" data-i18n="cases.c2_imp1_v">7,969 → 0.057</div>
+                <div class="case-impact-label" data-i18n="cases.c2_imp1_l">ms latency</div>
+              </div>
+              <div class="case-impact-item">
+                <div class="case-impact-value" data-i18n="cases.c2_imp2_v">99%</div>
+                <div class="case-impact-label" data-i18n="cases.c2_imp2_l">Reduction</div>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">PostgreSQL</span><span class="tag">Datadog APM</span><span class="tag">EXPLAIN ANALYZE</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Case 3: Loan -->
+        <article class="case-card reveal">
+          <div class="case-media">
+            <div class="case-placeholder">
+              <svg class="case-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 6v2M12 16v2"/></svg>
+              <span data-i18n="cases.c3_placeholder">[Awaiting screenshot: Loan creation form / repayment allocation diagram]</span>
+            </div>
+          </div>
+          <div class="case-body">
+            <div class="case-meta">
+              <span data-i18n="cases.c3_meta">FINTECH · LOANS · WORKFLOW</span>
+              <span class="case-meta-dot"></span>
+              <span>2024</span>
+            </div>
+            <h3 class="case-title" data-i18n="cases.c3_title">Loan Repayment & Creation</h3>
+            <p class="case-summary" data-i18n="cases.c3_summary">Designed Loan Creation with a maker-checker approval workflow and dynamic tenure-based pricing simulation. Built Loan Repayment that auto-allocates partial payments across loans following repayment constraints — eliminating manual ops work.</p>
+            <div class="case-impact">
+              <div class="case-impact-item">
+                <div class="case-impact-value" data-i18n="cases.c3_imp1_v">Maker-Checker</div>
+                <div class="case-impact-label" data-i18n="cases.c3_imp1_l">Approval workflow</div>
+              </div>
+              <div class="case-impact-item">
+                <div class="case-impact-value" data-i18n="cases.c3_imp2_v">Auto-alloc</div>
+                <div class="case-impact-label" data-i18n="cases.c3_imp2_l">Repayment engine</div>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">Spring Boot</span><span class="tag">PostgreSQL</span><span class="tag">Workflow</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Case 4: Hardcopy Invoice -->
+        <article class="case-card reveal reveal-delay-1">
+          <div class="case-media">
+            <div class="case-placeholder">
+              <svg class="case-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
+              <span data-i18n="cases.c4_placeholder">[Awaiting screenshot: Invoice template / pipeline diagram]</span>
+            </div>
+          </div>
+          <div class="case-body">
+            <div class="case-meta">
+              <span data-i18n="cases.c4_meta">AUTOMATION · INTERNAL TOOLS</span>
+              <span class="case-meta-dot"></span>
+              <span>2023</span>
+            </div>
+            <h3 class="case-title" data-i18n="cases.c4_title">Hardcopy Invoice Automation</h3>
+            <p class="case-summary" data-i18n="cases.c4_summary">Replaced a manual hardcopy invoice generation process used by internal Ops with an automated pipeline — improving billing efficiency, reducing payment delays, and freeing up the team for higher-leverage work.</p>
+            <div class="case-impact">
+              <div class="case-impact-item">
+                <div class="case-impact-value" data-i18n="cases.c4_imp1_v">60%</div>
+                <div class="case-impact-label" data-i18n="cases.c4_imp1_l">Manual time saved</div>
+              </div>
+              <div class="case-impact-item">
+                <div class="case-impact-value" data-i18n="cases.c4_imp2_v">Faster</div>
+                <div class="case-impact-label" data-i18n="cases.c4_imp2_l">Payment cycles</div>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">Spring Boot</span><span class="tag">PDF Gen</span><span class="tag">S3</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== STACK ============== -->
+  <section id="stack">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-eyebrow" data-i18n="stack.eyebrow">// toolbox</p>
+        <h2 class="section-title" data-i18n="stack.title">Stack I work with</h2>
+        <p class="section-subtitle" data-i18n="stack.subtitle">Tools I reach for daily — built for production, not for hype.</p>
+      </div>
+
+      <div class="stack-grid">
+        <div class="stack-group reveal">
+          <h3 class="stack-group-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span data-i18n="stack.g1_t">Languages</span>
+          </h3>
+          <div class="stack-chips">
+            <span class="chip">Java</span><span class="chip">Kotlin</span><span class="chip">C++</span><span class="chip">PHP</span><span class="chip">JavaScript</span><span class="chip">Shell</span>
+          </div>
+        </div>
+        <div class="stack-group reveal reveal-delay-1">
+          <h3 class="stack-group-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            <span data-i18n="stack.g2_t">Frameworks</span>
+          </h3>
+          <div class="stack-chips">
+            <span class="chip">Spring Boot</span><span class="chip">JUnit</span><span class="chip">Mockito</span><span class="chip">Karate</span><span class="chip">Laravel</span><span class="chip">CodeIgniter</span><span class="chip">Lark anycross</span>
+          </div>
+        </div>
+        <div class="stack-group reveal reveal-delay-2">
+          <h3 class="stack-group-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"/></svg>
+            <span data-i18n="stack.g3_t">Databases</span>
+          </h3>
+          <div class="stack-chips">
+            <span class="chip">PostgreSQL</span><span class="chip">MySQL</span><span class="chip">MSSQL</span><span class="chip">SQLite</span><span class="chip">DynamoDB</span><span class="chip">Redis</span>
+          </div>
+        </div>
+        <div class="stack-group reveal">
+          <h3 class="stack-group-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+            <span data-i18n="stack.g4_t">Cloud & Infra</span>
+          </h3>
+          <div class="stack-chips">
+            <span class="chip">AWS SQS</span><span class="chip">Lambda</span><span class="chip">Athena</span><span class="chip">ECS</span><span class="chip">S3</span><span class="chip">RDS</span><span class="chip">CloudWatch</span><span class="chip">Terraform</span><span class="chip">Docker</span>
+          </div>
+        </div>
+        <div class="stack-group reveal reveal-delay-1">
+          <h3 class="stack-group-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span data-i18n="stack.g5_t">Monitoring & Ops</span>
+          </h3>
+          <div class="stack-chips">
+            <span class="chip">DataDog</span><span class="chip">CloudWatch</span><span class="chip">PagerDuty</span><span class="chip">Git</span><span class="chip">Gradle</span><span class="chip">Vim</span>
+          </div>
+        </div>
+        <div class="stack-group reveal reveal-delay-2">
+          <h3 class="stack-group-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            <span data-i18n="stack.g6_t">Practices</span>
+          </h3>
+          <div class="stack-chips">
+            <span class="chip">REST APIs</span><span class="chip">RPC</span><span class="chip">Microservices</span><span class="chip">Event-Driven</span><span class="chip">System Design</span><span class="chip">DevSecOps</span>
+          </div>
         </div>
       </div>
     </div>
-    <div class="tab-content gallery mt-5">
-      <div class="tab-pane active" id="web-development">
-        <div class="ml-auto mr-auto">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <a href="#web-development">
-                  <figure class="cc-effect"><img src="images/friends1.jpg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4"> Project</div>
-                      <p>Web Development</p>
-                    </figcaption>
-                  </figure>
-                </a>
-              </div>
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <a href="#web-development">
-                  <figure class="cc-effect"><img src="images/friends2.jpg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">Startup Project</div>
-                      <p>Web Development</p>
-                    </figcaption>
-                  </figure>
-                </a>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <a href="#web-development">
-                  <figure class="cc-effect"><img src="images/friends3.jpg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">Food Order Project</div>
-                      <p>Web Development</p>
-                    </figcaption>
-                  </figure>
-                </a>
-              </div>
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <a href="#web-development">
-                  <figure class="cc-effect"><img src="images/friends4.jpg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">Web Advertising Project</div>
-                      <p>Web Development</p>
-                    </figcaption>
-                  </figure>
-                </a>
-              </div>
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <a href="#web-development">
-                  <figure class="cc-effect"><img src="images/friends5.png" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">Web Advertising Project</div>
-                      <p>Web Development</p>
-                    </figcaption>
-                  </figure>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+  </section>
+
+  <!-- ============== SIDE PROJECTS ============== -->
+  <section id="projects">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-eyebrow" data-i18n="projects.eyebrow">// playground</p>
+        <h2 class="section-title" data-i18n="projects.title">Side projects</h2>
+        <p class="section-subtitle" data-i18n="projects.subtitle">Small tools I built for myself or for fun. Live in this same repo — feel free to poke at them.</p>
       </div>
-      <div class="tab-pane" id="graphic-design" role="tabpanel">
-        <div class="ml-auto mr-auto">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <a href="#graphic-design">
-                  <figure class="cc-effect"><img src="images/image1.jpg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">Triangle Pattern</div>
-                      <p>Graphic Design</p>
-                    </figcaption>
-                  </figure>
-                </a>
-              </div>
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <a href="#graphic-design">
-                  <figure class="cc-effect"><img src="images/image2.jpg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">Abstract Umbrella</div>
-                      <p>Graphic Design</p>
-                    </figcaption>
-                  </figure>
-                </a>
-              </div>
+
+      <div class="projects-grid">
+        <a class="project-card reveal" href="/ksei/" target="_blank" rel="noopener">
+          <div class="project-head">
+            <div class="project-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
-            <div class="col-md-6">
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <a href="#graphic-design">
-                  <figure class="cc-effect"><img src="images/image3.jpg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">Cube Surface Texture</div>
-                      <p>Graphic Design</p>
-                    </figcaption>
-                  </figure>
-                </a>
-              </div>
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <a href="#graphic-design">
-                  <figure class="cc-effect"><img src="images/image4.jpg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">Abstract Line</div>
-                      <p>Graphic Design</p>
-                    </figcaption>
-                  </figure>
-                </a>
-              </div>
-            </div>
+            <span class="project-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+            </span>
           </div>
-        </div>
-      </div>
-      <div class="tab-pane" id="Photography" role="tabpanel">
-        <div class="ml-auto mr-auto">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <a href="#Photography">
-                  <figure class="cc-effect"><img src="images/image5.jpg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">Chinese new year</div>
-                      <p>Photography</p>
-                    </figcaption>
-                  </figure>
-                </a>
-              </div>
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <a href="#Photography">
-                  <figure class="cc-effect"><img src="images/image6.jpeg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">School farewell</div>
-                      <p>Photography</p>
-                    </figcaption>
-                  </figure>
-              </a>
-            </div>
-            </div>
-            <div class="col-md-6">
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom"><a href="#Photography">
-                  <figure class="cc-effect"><img src="images/image7.jpg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">Oil tanking</div>
-                      <p>Photography</p>
-                    </figcaption>
-                  </figure></a></div>
-              <div class="cc-porfolio-image img-raised" data-aos="fade-up" data-aos-anchor-placement="top-bottom"><a href="#Photography">
-                  <figure class="cc-effect"><img src="images/image8.jpeg" alt="Image"/>
-                    <figcaption>
-                      <div class="h4">School farewell</div>
-                      <p>Photography</p>
-                    </figcaption>
-                  </figure>
-              </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- <div class="section" id="experience">
-  <div class="container cc-experience">
-    <div class="h4 text-center mb-4 title">Work Experience</div>
-    <div class="card">
-      <div class="row">
-        <div class="col-md-3 bg-primary" data-aos="fade-right" data-aos-offset="50" data-aos-duration="500">
-          <div class="card-body cc-experience-header">
-            <p>March 2016 - Present</p>
-            <div class="h5">CreativeM</div>
-          </div>
-        </div>
-        <div class="col-md-9" data-aos="fade-left" data-aos-offset="50" data-aos-duration="500">
-          <div class="card-body">
-            <div class="h5">Front End Developer</div>
-            <p>Euismod massa scelerisque suspendisse fermentum habitant vitae ullamcorper magna quam iaculis, tristique sapien taciti mollis interdum sagittis libero nunc inceptos tellus, hendrerit vel eleifend primis lectus quisque cubilia sed mauris. Lacinia porta vestibulum diam integer quisque eros pulvinar curae, curabitur feugiat arcu vivamus parturient aliquet laoreet at, eu etiam pretium molestie ultricies sollicitudin dui.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="row">
-        <div class="col-md-3 bg-primary" data-aos="fade-right" data-aos-offset="50" data-aos-duration="500">
-          <div class="card-body cc-experience-header">
-            <p>April 2014 - March 2016</p>
-            <div class="h5">WebNote</div>
-          </div>
-        </div>
-        <div class="col-md-9" data-aos="fade-left" data-aos-offset="50" data-aos-duration="500">
-          <div class="card-body">
-            <div class="h5">Web Developer</div>
-            <p>Euismod massa scelerisque suspendisse fermentum habitant vitae ullamcorper magna quam iaculis, tristique sapien taciti mollis interdum sagittis libero nunc inceptos tellus, hendrerit vel eleifend primis lectus quisque cubilia sed mauris. Lacinia porta vestibulum diam integer quisque eros pulvinar curae, curabitur feugiat arcu vivamus parturient aliquet laoreet at, eu etiam pretium molestie ultricies sollicitudin dui.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="row">
-        <div class="col-md-3 bg-primary" data-aos="fade-right" data-aos-offset="50" data-aos-duration="500">
-          <div class="card-body cc-experience-header">
-            <p>April 2013 - February 2014</p>
-            <div class="h5">WEBM</div>
-          </div>
-        </div>
-        <div class="col-md-9" data-aos="fade-left" data-aos-offset="50" data-aos-duration="500">
-          <div class="card-body">
-            <div class="h5">Intern</div>
-            <p>Euismod massa scelerisque suspendisse fermentum habitant vitae ullamcorper magna quam iaculis, tristique sapien taciti mollis interdum sagittis libero nunc inceptos tellus, hendrerit vel eleifend primis lectus quisque cubilia sed mauris. Lacinia porta vestibulum diam integer quisque eros pulvinar curae, curabitur feugiat arcu vivamus parturient aliquet laoreet at, eu etiam pretium molestie ultricies sollicitudin dui.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
-<div class="section">
-  <div class="container cc-education">
-    <div class="h4 text-center mb-4 title">Education</div>
-    <div class="card">
-      <div class="row">
-        <div class="col-md-3 bg-primary" data-aos="fade-right" data-aos-offset="50" data-aos-duration="500">
-          <div class="card-body cc-education-header">
-            <p>2018 - Present</p>
-            <div class="h5">Bachelor's Degree</div>
-          </div>
-        </div>
-        <div class="col-md-9" data-aos="fade-left" data-aos-offset="50" data-aos-duration="500">
-          <div class="card-body">
-            <div class="h5">Bachelor of Information Technology</div>
-            <p class="category">University of Catholic Parahyangan</p>
-            <p>Parahyangan Catholic University or known with the abbreviation UNPAR is one of the oldest and most prestigious private universities in Indonesia, located in the city of Bandung. The main campus is located on Ciumbuleuit street, and other campuses are located on Merdeka street, Aceh street and Nias street. Before owning a building on Merdeka street, UNPAR also used the "Panti Budaya" building (now a new Bank Indonesia Building) for college activities.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div></div>
-    </div>
-    <footer class="footer">
-      <div class="container text-center">
-        <a class="cc-facebook btn btn-link" href="https://www.facebook.com/deddy.chandra007">
-          <i class="fa fa-facebook fa-2x " aria-hidden="true"></i>
+          <h3 class="project-title" data-i18n="projects.p1_title">KSEI PDF Reader</h3>
+          <p class="project-desc" data-i18n="projects.p1_desc">Parses Indonesian KSEI investment statements (PDF) into structured data so I can track my portfolio without copy-pasting.</p>
+          <div class="project-tech" data-i18n="projects.p1_tech">JavaScript · pdf.js</div>
         </a>
-        <a class="cc-twitter btn btn-link " href="https://twitter.com/DeddyChandra007">
-          <i class="fa fa-twitter fa-2x " aria-hidden="true"></i>
+
+        <a class="project-card reveal reveal-delay-1" href="/trading/" target="_blank" rel="noopener">
+          <div class="project-head">
+            <div class="project-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <span class="project-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+            </span>
+          </div>
+          <h3 class="project-title" data-i18n="projects.p2_title">Bandar Detector</h3>
+          <p class="project-desc" data-i18n="projects.p2_desc">Live IDX orderbook viewer that highlights large hidden orders ("bandar" activity). Pulls from public price feeds.</p>
+          <div class="project-tech" data-i18n="projects.p2_tech">JavaScript · Bootstrap</div>
         </a>
-        <a class="cc-instagram btn btn-link" href="https://www.instagram.com/deddychandra__/">
-          <i class="fa fa-instagram fa-2x " aria-hidden="true"></i>
+
+        <a class="project-card reveal reveal-delay-2" href="/JossPaper.html" target="_blank" rel="noopener">
+          <div class="project-head">
+            <div class="project-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>
+            </div>
+            <span class="project-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+            </span>
+          </div>
+          <h3 class="project-title" data-i18n="projects.p3_title">Joss Paper Converter</h3>
+          <p class="project-desc" data-i18n="projects.p3_desc">Converts a Rupiah amount into the right denominations of joss paper (金紙) — a small cultural utility.</p>
+          <div class="project-tech" data-i18n="projects.p3_tech">JavaScript · jQuery</div>
         </a>
       </div>
-      <div class="h4 title text-center">Deddy Chandra</div>
-      <div class="text-center text-muted">
-        <p>&copy; Creative CV. All rights reserved</p>
+    </div>
+  </section>
+
+  <!-- ============== ACHIEVEMENTS ============== -->
+  <section id="achievements">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-eyebrow" data-i18n="ach.eyebrow">// résumé</p>
+        <h2 class="section-title" data-i18n="ach.title">Certifications & competitions</h2>
       </div>
-    </footer>
-    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-    <script src="js/core/jquery.3.2.1.min.js?ver=1.1.0"></script>
-    <script src="js/core/popper.min.js?ver=1.1.0"></script>
-    <script src="js/core/bootstrap.min.js?ver=1.1.0"></script>
-    <script src="js/now-ui-kit.js?ver=1.1.0"></script>
-    <script src="js/aos.js?ver=1.1.0"></script>
-    <script src="scripts/main.js?ver=1.1.0"></script>
-    <script src="scripts/script.js" defer></script>
-  </body>
+
+      <div class="achievements-list mt-6">
+        <div class="achievement reveal"><span class="achievement-year">2026</span><span class="achievement-title" data-i18n="ach.i1_t">Architecting on AWS</span><span class="achievement-org" data-i18n="ach.i1_o">AWS Training</span></div>
+        <div class="achievement reveal"><span class="achievement-year">2025</span><span class="achievement-title" data-i18n="ach.i2_t">Top 8 Finalist · Lark Efficiency Pioneer</span><span class="achievement-org" data-i18n="ach.i2_o">Lark / ByteDance</span></div>
+        <div class="achievement reveal"><span class="achievement-year">2024</span><span class="achievement-title" data-i18n="ach.i3_t">AWS Cloud Practitioner Essentials</span><span class="achievement-org" data-i18n="ach.i3_o">AWS Training</span></div>
+        <div class="achievement reveal"><span class="achievement-year">2024</span><span class="achievement-title" data-i18n="ach.i4_t">AWS Technical Essentials</span><span class="achievement-org" data-i18n="ach.i4_o">AWS Training</span></div>
+        <div class="achievement reveal"><span class="achievement-year">2022</span><span class="achievement-title" data-i18n="ach.i5_t">DevNet Associate</span><span class="achievement-org" data-i18n="ach.i5_o">Cisco</span></div>
+        <div class="achievement reveal"><span class="achievement-year">2021</span><span class="achievement-title" data-i18n="ach.i6_t">CyberOps Associate</span><span class="achievement-org" data-i18n="ach.i6_o">Cisco</span></div>
+        <div class="achievement reveal"><span class="achievement-year">2021</span><span class="achievement-title" data-i18n="ach.i7_t">Huawei HCIA Datacom</span><span class="achievement-org" data-i18n="ach.i7_o">Huawei</span></div>
+        <div class="achievement reveal"><span class="achievement-year">2020</span><span class="achievement-title" data-i18n="ach.i8_t">ICPC Asia Jakarta Regional · Rank 10</span><span class="achievement-org" data-i18n="ach.i8_o">ICPC</span></div>
+        <div class="achievement reveal"><span class="achievement-year">2020</span><span class="achievement-title" data-i18n="ach.i9_t">ICPC National Contest · Rank 39</span><span class="achievement-org" data-i18n="ach.i9_o">ICPC</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== CONTACT ============== -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-card reveal">
+        <p class="contact-eyebrow" data-i18n="contact.eyebrow">// get in touch</p>
+        <h2 class="contact-title" data-i18n="contact.title">Let's build something</h2>
+        <p class="contact-desc" data-i18n="contact.desc">I'm always up for a chat about senior backend roles, fintech architecture, AWS, query optimization — or just nerdy engineering problems. Drop a line.</p>
+        <div class="contact-cta">
+          <a class="btn btn-primary" href="mailto:deddychandra678@gmail.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span data-i18n="contact.cta_email">Email me</span>
+          </a>
+          <a class="btn btn-ghost" href="https://linkedin.com/in/deddychandra" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+            <span data-i18n="contact.cta_linkedin">Connect on LinkedIn</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== FOOTER ============== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-text">
+        <span data-i18n="footer.tagline">Designed & built in Jakarta</span>
+        &nbsp;·&nbsp;
+        <span>© <span data-year>2026</span> Deddy Chandra</span>
+      </div>
+      <div class="footer-socials">
+        <a class="icon-btn" href="https://github.com/DeddyChandra" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.4.5 0 5.9 0 12.5c0 5.3 3.4 9.8 8.2 11.4.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2.9-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.6 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.8-1.6 8.2-6.1 8.2-11.4C24 5.9 18.6.5 12 .5z"/></svg>
+        </a>
+        <a class="icon-btn" href="https://linkedin.com/in/deddychandra" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        </a>
+        <a class="icon-btn" href="mailto:deddychandra678@gmail.com" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/main.js"></script>
+</body>
 </html>
