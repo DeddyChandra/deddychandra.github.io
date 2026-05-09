@@ -67,12 +67,14 @@
     }
 
     // ---- Auto-update years of experience (start: Jun 2022) ----
+    // Uses Math.round so e.g. 3.9 years reads as "4+" (matches CV convention
+    // of rounding to the year you're currently in).
     const yoeEl = document.getElementById('auto-yoe');
     if (yoeEl) {
       const start = new Date(2022, 5, 1); // 2022-06-01
       const now = new Date();
       const years = (now - start) / (1000 * 60 * 60 * 24 * 365.25);
-      yoeEl.textContent = Math.floor(years) + '+';
+      yoeEl.textContent = Math.max(1, Math.round(years)) + '+';
     }
 
     // ---- Current year in footer ----
