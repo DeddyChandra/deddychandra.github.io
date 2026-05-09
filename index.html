@@ -307,19 +307,16 @@
         <!-- Case 2: DB Performance -->
         <article class="case-card reveal reveal-delay-1">
           <div class="case-media">
-            <div class="case-placeholder">
-              <svg class="case-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"/></svg>
-              <span data-i18n="cases.c2_placeholder">[Awaiting screenshot: Datadog APM showing latency drop, EXPLAIN ANALYZE before/after]</span>
-            </div>
+            <img src="/assets/img/case-db-perf.png" alt="AWS CloudWatch CPU Utilization graph for the corporate-travel Postgres database, showing frequent 18 percent spikes before April 15 collapsing to a steady 6 percent baseline after a query optimization deploy" loading="lazy" />
           </div>
           <div class="case-body">
             <div class="case-meta">
-              <span data-i18n="cases.c2_meta">DATABASE · PERFORMANCE</span>
+              <span data-i18n="cases.c2_meta">DATABASE · POSTGRES · AWS RDS</span>
               <span class="case-meta-dot"></span>
-              <span>2024</span>
+              <span>Apr 2026</span>
             </div>
             <h3 class="case-title" data-i18n="cases.c2_title">Postgres Query Optimization</h3>
-            <p class="case-summary" data-i18n="cases.c2_summary">Diagnosed a slow corporate-travel query running Parallel Seq Scans on a multi-million-row table. Root cause: a data-type mismatch on the join column blocking Index Scans. Patched the schema and reclaimed orders-of-magnitude latency.</p>
+            <p class="case-summary" data-i18n="cases.c2_summary">The CloudWatch chart above tells the story. On April 15, a one-line fix for a data-type mismatch on the join column unlocked Index Scans for a corporate-travel Postgres query — dropping latency from 7,969 ms → 0.057 ms and collapsing sustained DB CPU from frequent 18%+ spikes down to a steady ~6%.</p>
             <div class="case-impact">
               <div class="case-impact-item">
                 <div class="case-impact-value" data-i18n="cases.c2_imp1_v">7,969 → 0.057</div>
@@ -331,7 +328,7 @@
               </div>
             </div>
             <div class="tag-row">
-              <span class="tag">PostgreSQL</span><span class="tag">Datadog APM</span><span class="tag">EXPLAIN ANALYZE</span>
+              <span class="tag">PostgreSQL</span><span class="tag">AWS RDS</span><span class="tag">CloudWatch</span><span class="tag">EXPLAIN ANALYZE</span>
             </div>
           </div>
         </article>
