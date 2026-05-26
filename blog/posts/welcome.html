@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Welcome to the new portfolio — Deddy Chandra</title>
+  <meta name="description" content="A short note on why I rebuilt my portfolio from scratch in 2026." />
+  <meta name="theme-color" content="#07090f" />
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="nav-brand-mark">DC</span>
+        <span>Deddy Chandra</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a class="nav-link" href="/#about" data-num="01.">About</a></li>
+        <li><a class="nav-link" href="/#work" data-num="03.">Work</a></li>
+        <li><a class="nav-link" href="/#projects" data-num="05.">Projects</a></li>
+        <li><a class="nav-link active" href="/blog/" data-num="·">Blog</a></li>
+        <li><a class="nav-link" href="/now.html" data-num="·">Now</a></li>
+      </ul>
+      <div class="nav-actions">
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="zh">中</button>
+          <button class="lang-btn" data-lang="id">ID</button>
+        </div>
+        <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container-narrow" style="padding-top: 140px; padding-bottom: 80px;">
+    <a href="/blog/" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); margin-bottom: 24px; display: inline-block;" data-i18n="blog.back">← All posts</a>
+
+    <p class="mono" style="color: var(--text-faint); font-size: 0.85rem;">2026-05-09 · 3 min read</p>
+    <h1 style="font-size: clamp(1.75rem, 4vw, 2.75rem); margin: 12px 0 32px;">Welcome to the new portfolio (and how I rebuilt it)</h1>
+
+    <article class="prose">
+      <p>This site used to be a generic Bootstrap CV template with a "Web Developer, Gamers, Buddhist" tagline and a tab full of school-farewell photos. It was time.</p>
+
+      <p>The new version is built around a single idea: <strong>show the work, not the title.</strong> Every section now leads with what I shipped and what it changed — revenue numbers, latency drops, ops time saved.</p>
+
+      <h2>What's under the hood</h2>
+      <p>It's intentionally simple — vanilla HTML, a single CSS file, three small JS modules:</p>
+      <ul>
+        <li><code>theme.js</code> — dark/light toggle that respects system preference</li>
+        <li><code>i18n.js</code> — a tiny translation engine swapping <code>data-i18n</code> attributes (EN / 中文 / Bahasa)</li>
+        <li><code>main.js</code> — scroll reveals, nav state, mobile menu</li>
+      </ul>
+      <p>No build step, no framework. I can edit any file and just refresh. That matters more to me than a fancy stack.</p>
+
+      <h2>What's next</h2>
+      <p>I'll be filling in the case-study screenshots (Datadog APM, the insurance flow, loan creation) and writing a few deeper posts on database performance, event-driven systems, and DevSecOps. Subscribe via RSS — or just drop me an email.</p>
+
+      <blockquote>The goal isn't a perfect portfolio. It's one that respects the reader's time.</blockquote>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-text">
+        <span data-i18n="footer.tagline">Designed & built in Jakarta</span>
+        &nbsp;·&nbsp;
+        <span>© <span data-year>2026</span> Deddy Chandra</span>
+      </div>
+      <div class="footer-socials">
+        <a class="icon-btn" href="/" aria-label="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Uses — Deddy Chandra</title>
+  <meta name="description" content="Hardware, software, and services Deddy Chandra uses." />
+  <meta name="theme-color" content="#07090f" />
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="nav-brand-mark">DC</span>
+        <span>Deddy Chandra</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a class="nav-link" href="/#about" data-num="01." data-i18n="nav.about">About</a></li>
+        <li><a class="nav-link" href="/#work" data-num="03." data-i18n="nav.work">Work</a></li>
+        <li><a class="nav-link" href="/#projects" data-num="05." data-i18n="nav.projects">Projects</a></li>
+        <li><a class="nav-link" href="/blog/" data-num="·" data-i18n="nav.blog">Blog</a></li>
+        <li><a class="nav-link" href="/now.html" data-num="·" data-i18n="nav.now">Now</a></li>
+        <li><a class="nav-link active" href="/uses.html" data-num="·" data-i18n="nav.uses">Uses</a></li>
+      </ul>
+      <div class="nav-actions">
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="zh">中</button>
+          <button class="lang-btn" data-lang="id">ID</button>
+        </div>
+        <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container-narrow" style="padding-top: 140px; padding-bottom: 80px;">
+    <p class="section-eyebrow">// setup</p>
+    <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 12px;" data-i18n="uses.title">What I use</h1>
+    <p class="text-muted" data-i18n="uses.subtitle">Hardware and software that powers my day. <em>(Customize freely — these are starter picks.)</em></p>
+
+    <div class="uses-grid">
+      <div class="stack-group">
+        <h3 class="stack-group-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          <span data-i18n="uses.g1_t">Editor & Terminal</span>
+        </h3>
+        <div class="stack-chips">
+          <span class="chip">IntelliJ IDEA</span><span class="chip">Cursor</span><span class="chip">Vim</span><span class="chip">Windows Terminal</span><span class="chip">Git</span>
+        </div>
+      </div>
+
+      <div class="stack-group">
+        <h3 class="stack-group-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          <span data-i18n="uses.g2_t">Languages I reach for</span>
+        </h3>
+        <div class="stack-chips">
+          <span class="chip">Java</span><span class="chip">Kotlin</span><span class="chip">JavaScript</span><span class="chip">Shell</span>
+        </div>
+      </div>
+
+      <div class="stack-group">
+        <h3 class="stack-group-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span data-i18n="uses.g3_t">Hardware</span>
+        </h3>
+        <div class="stack-chips">
+          <span class="chip">[Your laptop]</span><span class="chip">[Monitor]</span><span class="chip">[Keyboard]</span><span class="chip">[Mouse]</span>
+        </div>
+      </div>
+
+      <div class="stack-group">
+        <h3 class="stack-group-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+          <span data-i18n="uses.g4_t">Cloud & Services</span>
+        </h3>
+        <div class="stack-chips">
+          <span class="chip">AWS</span><span class="chip">GitHub</span><span class="chip">Datadog</span><span class="chip">Terraform Cloud</span>
+        </div>
+      </div>
+
+      <div class="stack-group">
+        <h3 class="stack-group-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span data-i18n="uses.g5_t">Daily tools</span>
+        </h3>
+        <div class="stack-chips">
+          <span class="chip">Lark</span><span class="chip">Notion</span><span class="chip">Postman</span><span class="chip">Figma</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-text">
+        <span data-i18n="footer.tagline">Designed & built in Jakarta</span>
+        &nbsp;·&nbsp;
+        <span>© <span data-year>2026</span> Deddy Chandra</span>
+      </div>
+      <div class="footer-socials">
+        <a class="icon-btn" href="/" aria-label="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/main.js"></script>
+</body>
+</html>

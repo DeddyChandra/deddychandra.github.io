@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>How a data-type mismatch cost us 99% of our query performance — Deddy Chandra</title>
+  <meta name="description" content="A small story about big numbers: from 7,969 ms to 0.057 ms by fixing a single data-type mismatch in Postgres." />
+  <meta name="theme-color" content="#07090f" />
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="nav-brand-mark">DC</span>
+        <span>Deddy Chandra</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a class="nav-link" href="/#about" data-num="01.">About</a></li>
+        <li><a class="nav-link" href="/#work" data-num="03.">Work</a></li>
+        <li><a class="nav-link" href="/#projects" data-num="05.">Projects</a></li>
+        <li><a class="nav-link active" href="/blog/" data-num="·">Blog</a></li>
+        <li><a class="nav-link" href="/now.html" data-num="·">Now</a></li>
+      </ul>
+      <div class="nav-actions">
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="zh">中</button>
+          <button class="lang-btn" data-lang="id">ID</button>
+        </div>
+        <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container-narrow" style="padding-top: 140px; padding-bottom: 80px;">
+    <a href="/blog/" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); margin-bottom: 24px; display: inline-block;" data-i18n="blog.back">← All posts</a>
+
+    <p class="mono" style="color: var(--text-faint); font-size: 0.85rem;">2026-04-20 · 8 min read</p>
+    <h1 style="font-size: clamp(1.75rem, 4vw, 2.75rem); margin: 12px 0 32px;">How a single data-type mismatch cost us 99% of our query performance</h1>
+
+    <article class="prose">
+      <p><em>This is a placeholder post — replace with your actual writeup. The skeleton below is here to show what a long-form post looks like in this design.</em></p>
+
+      <p>One Tuesday morning, our PagerDuty lit up. A read endpoint that usually returned in under 10 ms was now sitting at <strong>7.9 seconds</strong>. The table backing it had grown to a few million rows, but nothing dramatic. So why was Postgres falling over?</p>
+
+      <h2>The smoking gun in EXPLAIN</h2>
+      <p>The first thing I always do is grab the actual plan, not just <code>EXPLAIN</code> but <code>EXPLAIN (ANALYZE, BUFFERS)</code>. Here's the offender:</p>
+
+      <pre><code>Parallel Seq Scan on bookings  (cost=0.00..123456.78 rows=2345678)
+  Filter: ((user_id)::text = '12345'::text)
+  Rows Removed by Filter: 9876543</code></pre>
+
+      <p>See it? <code>(user_id)::text</code>. Postgres was casting the column to text on every row, which made my carefully created index on <code>user_id</code> completely useless.</p>
+
+      <h2>Why that happens</h2>
+      <p>The column was <code>BIGINT</code>, but somewhere in the call chain a string parameter got passed in. Postgres can't use a <code>BIGINT</code> index for a text comparison, so it falls back to a Parallel Seq Scan and crawls the whole table.</p>
+
+      <h2>The fix</h2>
+      <p>One line in the application code, casting the parameter to a long. The next plan looked like this:</p>
+
+      <pre><code>Index Scan using bookings_user_id_idx on bookings  (cost=0.43..8.45 rows=1)
+  Index Cond: (user_id = 12345)</code></pre>
+
+      <p>Latency dropped from <strong>7,969 ms → 0.057 ms</strong>. A 99% reduction, from a one-line patch.</p>
+
+      <h2>Lessons</h2>
+      <ul>
+        <li>Always read <code>EXPLAIN ANALYZE</code> — predicates that wrap a column in a function or cast almost never use the index.</li>
+        <li>Stricter ORM/RPC type contracts would have caught this earlier.</li>
+        <li>Add APM-driven alerts on p99, not just averages — the average barely budged because most queries took the fast path.</li>
+      </ul>
+
+      <blockquote>Performance bugs hide in plain sight. The plan tells you the truth.</blockquote>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-text">
+        <span data-i18n="footer.tagline">Designed & built in Jakarta</span>
+        &nbsp;·&nbsp;
+        <span>© <span data-year>2026</span> Deddy Chandra</span>
+      </div>
+      <div class="footer-socials">
+        <a class="icon-btn" href="/" aria-label="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/main.js"></script>
+</body>
+</html>
