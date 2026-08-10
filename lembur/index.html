@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kalkulator Lembur — Deddy Chandra</title>
+  <meta name="description" content="Kalkulator upah lembur karyawan Indonesia sesuai Kepmenakertrans No. KEP.102/MEN/VI/2004 jo. PP No. 35 Tahun 2021. Masukkan gaji dan jam lembur hari kerja / akhir pekan." />
+  <meta name="theme-color" content="#07090f" />
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <script src="/assets/js/theme.js"></script>
+  <style>
+    /* ----- Overtime calculator (scoped to this page) ----- */
+    .ot-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+      margin-top: 40px;
+    }
+    @media (max-width: 860px) {
+      .ot-wrap { grid-template-columns: 1fr; }
+    }
+    .ot-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .ot-card + .ot-card { margin-top: 20px; }
+    .ot-card-title {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ot-card-title svg { width: 15px; height: 15px; }
+    .ot-field { margin-bottom: 18px; }
+    .ot-field:last-child { margin-bottom: 0; }
+    .ot-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .ot-hint { font-size: 0.75rem; color: var(--text-faint); margin-top: 6px; }
+    .ot-input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .ot-prefix {
+      position: absolute;
+      left: 14px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+    .ot-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--text-strong);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .ot-input.has-prefix { padding-left: 40px; }
+    .ot-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .ot-input::placeholder { color: var(--text-faint); }
+    .ot-suffix {
+      position: absolute;
+      right: 14px;
+      color: var(--text-faint);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      pointer-events: none;
+    }
+    .ot-day-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .ot-day-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ot-day-label {
+      flex: 0 0 58px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .ot-day-row .ot-input-group { flex: 1; }
+    .ot-day-remove {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-faint);
+      font-size: 1.1rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
+    .ot-day-remove:hover { border-color: var(--danger); color: var(--danger); }
+    .ot-day-row:only-child .ot-day-remove { visibility: hidden; }
+    .ot-add-day {
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 4px;
+      font-size: 0.82rem;
+      padding: 10px 16px;
+    }
+    .ot-add-day:disabled { opacity: 0.45; cursor: not-allowed; }
+    .ot-radio-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .ot-radio {
+      flex: 1;
+      min-width: 180px;
+    }
+    .ot-radio input { position: absolute; opacity: 0; pointer-events: none; }
+    .ot-radio-card {
+      display: block;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      transition: all var(--transition);
+    }
+    .ot-radio-card strong { display: block; color: var(--text); font-size: 0.88rem; margin-bottom: 2px; }
+    .ot-radio input:checked + .ot-radio-card {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .ot-radio input:checked + .ot-radio-card strong { color: var(--accent); }
+    .ot-radio input:focus-visible + .ot-radio-card { box-shadow: 0 0 0 3px var(--accent-soft); }
+
+    .ot-result {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-soft);
+      gap: 12px;
+    }
+    .ot-result:last-child { border-bottom: none; }
+    .ot-result-label { font-size: 0.85rem; color: var(--text-muted); }
+    .ot-result-value {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-strong);
+      white-space: nowrap;
+      transition: color 300ms ease;
+    }
+    .ot-result-value.flash { color: var(--accent); }
+    .ot-result.total .ot-result-label { color: var(--text-strong); font-weight: 600; }
+    .ot-result.total .ot-result-value { color: var(--accent); font-size: 1.3rem; }
+    .ot-result.grand { margin-top: 4px; padding-top: 16px; border-top: 1px dashed var(--border); }
+    .ot-result.grand .ot-result-value { font-size: 1.5rem; }
+
+    .ot-breakdown {
+      margin-top: 6px;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--text-faint);
+      line-height: 1.7;
+    }
+    .ot-breakdown span { color: var(--text-muted); }
+
+    .ot-warning {
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid var(--warn);
+      color: var(--warn);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.8rem;
+      margin-top: 18px;
+    }
+    .ot-warning.show { display: flex; }
+    .ot-warning svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .ot-details {
+      margin-top: 32px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .ot-details summary {
+      cursor: pointer;
+      padding: 16px 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ot-details summary::-webkit-details-marker { display: none; }
+    .ot-details summary::after {
+      content: "+";
+      font-family: var(--font-mono);
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+    .ot-details[open] summary::after { content: "−"; }
+    .ot-details-body {
+      padding: 0 20px 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .ot-details-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 0.8rem;
+    }
+    .ot-details-body th, .ot-details-body td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .ot-details-body th { color: var(--text-faint); font-weight: 600; text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.05em; }
+    .ot-details-body code {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      color: var(--accent);
+    }
+
+    .ot-reset {
+      margin-top: 20px;
+      width: 100%;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="nav-brand-mark">DC</span>
+        <span>Deddy Chandra</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a class="nav-link" href="/#about" data-num="01.">About</a></li>
+        <li><a class="nav-link" href="/#work" data-num="03.">Work</a></li>
+        <li><a class="nav-link" href="/#projects" data-num="05.">Projects</a></li>
+        <li><a class="nav-link" href="/blog/" data-num="·">Blog</a></li>
+        <li><a class="nav-link" href="/now.html" data-num="·">Now</a></li>
+        <li><a class="nav-link" href="/uses.html" data-num="·">Uses</a></li>
+        <li><a class="nav-link active" href="/lembur/" data-num="·">Lembur</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container-narrow" style="padding-top: 140px; padding-bottom: 80px;">
+    <p class="section-eyebrow">// kalkulator</p>
+    <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 12px;">Kalkulator Lembur</h1>
+    <p class="text-muted">
+      Hitung upah lembur sesuai aturan ketenagakerjaan Indonesia
+      (Kepmenakertrans No. KEP.102/MEN/VI/2004 jo. PP No. 35 Tahun 2021).
+      Masukkan gaji bulanan dan jumlah jam lembur — hasil dihitung otomatis.
+    </p>
+
+    <div class="ot-wrap">
+      <!-- INPUT -->
+      <div>
+        <div class="ot-card">
+          <p class="ot-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Gaji &amp; Jenis Minggu Kerja
+          </p>
+
+          <div class="ot-field">
+            <label class="ot-label" for="salary">Gaji Pokok Bulanan</label>
+            <div class="ot-input-group">
+              <span class="ot-prefix">Rp</span>
+              <input class="ot-input has-prefix" type="text" inputmode="numeric" id="salary" placeholder="5.000.000" autocomplete="off" />
+            </div>
+            <p class="ot-hint">Gaji pokok + tunjangan tetap (jika ada). Upah sejam = gaji ÷ 173.</p>
+          </div>
+
+          <div class="ot-field">
+            <label class="ot-label">Jenis Minggu Kerja</label>
+            <div class="ot-radio-group">
+              <label class="ot-radio">
+                <input type="radio" name="weekType" value="6" checked />
+                <span class="ot-radio-card"><strong>6 hari kerja</strong>Senin–Sabtu, libur 1 hari</span>
+              </label>
+              <label class="ot-radio">
+                <input type="radio" name="weekType" value="5" />
+                <span class="ot-radio-card"><strong>5 hari kerja</strong>Senin–Jumat, libur 2 hari</span>
+              </label>
+            </div>
+            <p class="ot-hint">Menentukan tingkatan kali upah untuk lembur di hari libur/akhir pekan.</p>
+          </div>
+        </div>
+
+        <div class="ot-card">
+          <p class="ot-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Lembur Hari Kerja
+          </p>
+          <div class="ot-day-list" id="weekdayDays"></div>
+          <button class="btn btn-ghost ot-add-day" id="addWeekdayDay" type="button">+ Tambah hari</button>
+          <p class="ot-hint">Tiap hari dihitung terpisah: jam ke-1 = 1,5×, jam berikutnya = 2× — hitungan reset ulang setiap hari, jadi 3 jam Senin + 3 jam Selasa ≠ 6 jam berturut-turut.</p>
+        </div>
+
+        <div class="ot-card">
+          <p class="ot-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Lembur Akhir Pekan / Hari Libur
+          </p>
+          <div class="ot-day-list" id="weekendDays"></div>
+          <button class="btn btn-ghost ot-add-day" id="addWeekendDay" type="button">+ Tambah hari</button>
+          <p class="ot-hint">Tingkatan kali upah mengikuti jenis minggu kerja yang dipilih di atas, dan juga reset setiap hari.</p>
+        </div>
+
+        <div class="ot-card">
+          <div class="ot-warning" id="warning">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>Ada hari yang melebihi 4 jam lembur, atau total mingguan melebihi 18 jam — sesuai batas maksimal peraturan.</span>
+          </div>
+          <button class="btn btn-ghost ot-reset" id="resetBtn" type="button">Reset</button>
+        </div>
+      </div>
+
+      <!-- OUTPUT -->
+      <div class="ot-card" style="position: sticky; top: 100px;">
+        <p class="ot-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+          Hasil Perhitungan
+        </p>
+
+        <div class="ot-result">
+          <span class="ot-result-label">Upah per Jam</span>
+          <span class="ot-result-value" id="hourlyWage">Rp0</span>
+        </div>
+        <div class="ot-result">
+          <span class="ot-result-label">Total Jam Lembur</span>
+          <span class="ot-result-value" id="totalHours">0 jam</span>
+        </div>
+
+        <div class="ot-result">
+          <span class="ot-result-label">Upah Lembur — Hari Kerja</span>
+          <span class="ot-result-value" id="weekdayPay">Rp0</span>
+        </div>
+        <div class="ot-breakdown" id="weekdayBreakdown"></div>
+
+        <div class="ot-result">
+          <span class="ot-result-label">Upah Lembur — Akhir Pekan/Libur</span>
+          <span class="ot-result-value" id="weekendPay">Rp0</span>
+        </div>
+        <div class="ot-breakdown" id="weekendBreakdown"></div>
+
+        <div class="ot-result total">
+          <span class="ot-result-label">Total Upah Lembur</span>
+          <span class="ot-result-value" id="totalOvertime">Rp0</span>
+        </div>
+        <div class="ot-result grand">
+          <span class="ot-result-label">Total Gaji (Pokok + Lembur)</span>
+          <span class="ot-result-value" id="totalSalary">Rp0</span>
+        </div>
+      </div>
+    </div>
+
+    <details class="ot-details">
+      <summary>Dasar hukum &amp; rumus perhitungan</summary>
+      <div class="ot-details-body">
+        <p>
+          Perhitungan mengacu pada <strong>Kepmenakertrans No. KEP.102/MEN/VI/2004</strong> tentang
+          Waktu Kerja Lembur dan Upah Kerja Lembur, yang tetap berlaku sebagai aturan pelaksana
+          <strong>Pasal 78 UU No. 13/2003</strong> sebagaimana diubah oleh UU Cipta Kerja
+          (<strong>PP No. 35 Tahun 2021</strong>).
+        </p>
+        <p>Upah sejam dihitung dengan: <code>1 / 173 × gaji sebulan</code>.</p>
+
+        <p><strong>Lembur hari kerja biasa:</strong></p>
+        <table>
+          <thead><tr><th>Jam ke-</th><th>Kali Upah Sejam</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>1,5×</td></tr>
+            <tr><td>2 dan seterusnya</td><td>2×</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>Lembur di hari istirahat mingguan/libur resmi:</strong></p>
+        <table>
+          <thead><tr><th>Jam ke-</th><th>6 hari kerja/minggu</th><th>5 hari kerja/minggu</th></tr></thead>
+          <tbody>
+            <tr><td>1–7 / 1–8</td><td>2×</td><td>2×</td></tr>
+            <tr><td>8 / 9</td><td>3×</td><td>3×</td></tr>
+            <tr><td>9–10 / 10–11</td><td>4×</td><td>4×</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Batas maksimal lembur menurut peraturan adalah 4 jam per hari dan 18 jam per minggu.
+          Kalkulator ini adalah alat bantu estimasi pribadi dan bukan nasihat hukum atau
+          penggantian perhitungan payroll resmi perusahaan.
+        </p>
+      </div>
+    </details>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-text">
+        <span>Designed &amp; built in Jakarta</span>
+        &nbsp;·&nbsp;
+        <span>© <span data-year>2026</span> Deddy Chandra</span>
+      </div>
+      <div class="footer-socials">
+        <a class="icon-btn" href="/" aria-label="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/main.js"></script>
+  <script>
+    (function () {
+      const salaryInput = document.getElementById('salary');
+      const weekdayDaysEl = document.getElementById('weekdayDays');
+      const weekendDaysEl = document.getElementById('weekendDays');
+      const addWeekdayDayBtn = document.getElementById('addWeekdayDay');
+      const addWeekendDayBtn = document.getElementById('addWeekendDay');
+      const weekTypeInputs = document.querySelectorAll('input[name="weekType"]');
+      const resetBtn = document.getElementById('resetBtn');
+      const warningEl = document.getElementById('warning');
+
+      const hourlyWageEl = document.getElementById('hourlyWage');
+      const totalHoursEl = document.getElementById('totalHours');
+      const weekdayPayEl = document.getElementById('weekdayPay');
+      const weekendPayEl = document.getElementById('weekendPay');
+      const totalOvertimeEl = document.getElementById('totalOvertime');
+      const totalSalaryEl = document.getElementById('totalSalary');
+      const weekdayBreakdownEl = document.getElementById('weekdayBreakdown');
+      const weekendBreakdownEl = document.getElementById('weekendBreakdown');
+
+      const MAX_DAYS = 7;
+      const MAX_DAILY_HOURS = 4;
+      const MAX_WEEKLY_HOURS = 18;
+
+      // Per Kepmenakertrans No. KEP.102/MEN/VI/2004 — tiers reset every calendar day.
+      const WEEKDAY_TIERS = [
+        { cap: 1, mult: 1.5 },
+        { cap: Infinity, mult: 2 },
+      ];
+      const WEEKEND_TIERS = {
+        '6': [
+          { cap: 7, mult: 2 },
+          { cap: 1, mult: 3 },
+          { cap: 2, mult: 4 },
+          { cap: Infinity, mult: 4 },
+        ],
+        '5': [
+          { cap: 8, mult: 2 },
+          { cap: 1, mult: 3 },
+          { cap: 2, mult: 4 },
+          { cap: Infinity, mult: 4 },
+        ],
+      };
+
+      const rupiahFmt = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 });
+      function formatRupiah(n) {
+        return 'Rp' + rupiahFmt.format(Math.round(n) || 0);
+      }
+      function parseDigits(str) {
+        const digits = (str || '').replace(/\D/g, '');
+        return digits ? parseInt(digits, 10) : 0;
+      }
+      function parseHours(str) {
+        const n = parseFloat(str);
+        return Number.isFinite(n) && n > 0 ? n : 0;
+      }
+
+      // Applies tier caps within a single day (tiers always restart per day).
+      function calcTiered(hours, tiers, hourlyWage) {
+        let remaining = hours;
+        let total = 0;
+        const rows = [];
+        for (const tier of tiers) {
+          if (remaining <= 0) break;
+          const used = Math.min(remaining, tier.cap);
+          if (used > 0) {
+            total += used * tier.mult * hourlyWage;
+            rows.push({ hours: used, mult: tier.mult });
+          }
+          remaining -= used;
+        }
+        return { total, rows };
+      }
+
+      function calcCategory(hoursPerDay, tiers, hourlyWage) {
+        let total = 0;
+        let anyOverDaily = false;
+        const perDay = [];
+        hoursPerDay.forEach((h, idx) => {
+          if (h > MAX_DAILY_HOURS) anyOverDaily = true;
+          if (h <= 0) return;
+          const { total: dayTotal, rows } = calcTiered(h, tiers, hourlyWage);
+          total += dayTotal;
+          perDay.push({ day: idx + 1, hours: h, rows, pay: dayTotal });
+        });
+        const totalHours = hoursPerDay.reduce((a, b) => a + b, 0);
+        return { total, perDay, totalHours, anyOverDaily };
+      }
+
+      function renderBreakdown(el, perDay) {
+        if (!perDay.length) {
+          el.innerHTML = '';
+          return;
+        }
+        el.innerHTML = perDay
+          .map((d) => {
+            const tierStr = d.rows.map((r) => `${r.hours}j×${r.mult}×`).join(' + ');
+            return `<div>Hari ${d.day} (${d.hours}j): ${tierStr} <span>= ${formatRupiah(d.pay)}</span></div>`;
+          })
+          .join('');
+      }
+
+      function flash(el) {
+        el.classList.remove('flash');
+        void el.offsetWidth;
+        el.classList.add('flash');
+      }
+
+      function getDayHours(container) {
+        return Array.from(container.querySelectorAll('.ot-day-input')).map((i) => parseHours(i.value));
+      }
+
+      function renumberDays(container) {
+        container.querySelectorAll('.ot-day-row').forEach((row, i) => {
+          row.querySelector('.ot-day-label').textContent = 'Hari ' + (i + 1);
+        });
+      }
+
+      function updateAddButtonState(container, btn) {
+        btn.disabled = container.querySelectorAll('.ot-day-row').length >= MAX_DAYS;
+      }
+
+      function addDayRow(container, btn) {
+        if (container.querySelectorAll('.ot-day-row').length >= MAX_DAYS) return;
+        const row = document.createElement('div');
+        row.className = 'ot-day-row';
+        const dayNum = container.querySelectorAll('.ot-day-row').length + 1;
+        row.innerHTML =
+          '<span class="ot-day-label">Hari ' + dayNum + '</span>' +
+          '<div class="ot-input-group">' +
+          '<input class="ot-input ot-day-input" type="number" min="0" max="24" step="0.5" placeholder="0" />' +
+          '<span class="ot-suffix">jam</span>' +
+          '</div>' +
+          '<button type="button" class="ot-day-remove" aria-label="Hapus hari">×</button>';
+        container.appendChild(row);
+        row.querySelector('.ot-day-input').addEventListener('input', calculate);
+        row.querySelector('.ot-day-remove').addEventListener('click', () => {
+          if (container.querySelectorAll('.ot-day-row').length <= 1) return;
+          row.remove();
+          renumberDays(container);
+          updateAddButtonState(container, btn);
+          calculate();
+        });
+        updateAddButtonState(container, btn);
+        calculate();
+      }
+
+      function resetDays(container, btn) {
+        container.innerHTML = '';
+        addDayRow(container, btn);
+      }
+
+      function calculate() {
+        const salary = parseDigits(salaryInput.value);
+        const weekType = document.querySelector('input[name="weekType"]:checked').value;
+        const weekdayHours = getDayHours(weekdayDaysEl);
+        const weekendHours = getDayHours(weekendDaysEl);
+        const hourlyWage = salary / 173;
+
+        const wd = calcCategory(weekdayHours, WEEKDAY_TIERS, hourlyWage);
+        const we = calcCategory(weekendHours, WEEKEND_TIERS[weekType], hourlyWage);
+        const totalOvertime = wd.total + we.total;
+        const totalSalary = salary + totalOvertime;
+        const totalHours = wd.totalHours + we.totalHours;
+
+        hourlyWageEl.textContent = formatRupiah(hourlyWage);
+        totalHoursEl.textContent = (Math.round(totalHours * 100) / 100) + ' jam';
+        weekdayPayEl.textContent = formatRupiah(wd.total);
+        weekendPayEl.textContent = formatRupiah(we.total);
+        totalOvertimeEl.textContent = formatRupiah(totalOvertime);
+        totalSalaryEl.textContent = formatRupiah(totalSalary);
+
+        renderBreakdown(weekdayBreakdownEl, wd.perDay);
+        renderBreakdown(weekendBreakdownEl, we.perDay);
+
+        [totalOvertimeEl, totalSalaryEl].forEach(flash);
+
+        warningEl.classList.toggle('show', totalHours > MAX_WEEKLY_HOURS || wd.anyOverDaily || we.anyOverDaily);
+      }
+
+      salaryInput.addEventListener('input', () => {
+        const digits = salaryInput.value.replace(/\D/g, '');
+        salaryInput.value = digits ? rupiahFmt.format(parseInt(digits, 10)) : '';
+        calculate();
+      });
+      weekTypeInputs.forEach((r) => r.addEventListener('change', calculate));
+
+      addWeekdayDayBtn.addEventListener('click', () => addDayRow(weekdayDaysEl, addWeekdayDayBtn));
+      addWeekendDayBtn.addEventListener('click', () => addDayRow(weekendDaysEl, addWeekendDayBtn));
+
+      resetBtn.addEventListener('click', () => {
+        salaryInput.value = '';
+        resetDays(weekdayDaysEl, addWeekdayDayBtn);
+        resetDays(weekendDaysEl, addWeekendDayBtn);
+        document.querySelector('input[name="weekType"][value="6"]').checked = true;
+        calculate();
+      });
+
+      addDayRow(weekdayDaysEl, addWeekdayDayBtn);
+      addDayRow(weekendDaysEl, addWeekendDayBtn);
+      calculate();
+    })();
+  </script>
+</body>
+</html>
