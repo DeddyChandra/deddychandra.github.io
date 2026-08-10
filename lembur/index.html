@@ -321,6 +321,20 @@
           </p>
 
           <div class="ot-field">
+            <label class="ot-label">Cara Input Gaji</label>
+            <div class="ot-radio-group">
+              <label class="ot-radio">
+                <input type="radio" name="salaryMode" value="direct" checked />
+                <span class="ot-radio-card"><strong>Input langsung</strong>Satu angka gaji pokok bulanan</span>
+              </label>
+              <label class="ot-radio">
+                <input type="radio" name="salaryMode" value="breakdown" />
+                <span class="ot-radio-card"><strong>Rincian</strong>Gaji pokok + tunjangan lokasi</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="ot-field" id="salaryDirectField">
             <label class="ot-label" for="salary">Gaji Pokok Bulanan</label>
             <div class="ot-input-group">
               <span class="ot-prefix">Rp</span>
@@ -329,16 +343,34 @@
             <p class="ot-hint">Gaji pokok + tunjangan tetap (jika ada). Upah sejam = gaji ÷ 173.</p>
           </div>
 
+          <div id="salaryBreakdownFields" style="display: none;">
+            <div class="ot-field">
+              <label class="ot-label" for="basicSalary">Gaji Pokok</label>
+              <div class="ot-input-group">
+                <span class="ot-prefix">Rp</span>
+                <input class="ot-input has-prefix" type="text" inputmode="numeric" id="basicSalary" placeholder="4.000.000" autocomplete="off" />
+              </div>
+            </div>
+            <div class="ot-field">
+              <label class="ot-label" for="locationAllowance">Tunjangan Lokasi</label>
+              <div class="ot-input-group">
+                <span class="ot-prefix">Rp</span>
+                <input class="ot-input has-prefix" type="text" inputmode="numeric" id="locationAllowance" placeholder="1.000.000" autocomplete="off" />
+              </div>
+              <p class="ot-hint">Total gaji pokok bulanan: <strong id="breakdownTotal">Rp0</strong> — dipakai untuk hitung upah sejam (÷ 173).</p>
+            </div>
+          </div>
+
           <div class="ot-field">
             <label class="ot-label">Jenis Minggu Kerja</label>
             <div class="ot-radio-group">
               <label class="ot-radio">
-                <input type="radio" name="weekType" value="6" checked />
-                <span class="ot-radio-card"><strong>6 hari kerja</strong>Senin–Sabtu, libur 1 hari</span>
+                <input type="radio" name="weekType" value="5" checked />
+                <span class="ot-radio-card"><strong>5 hari kerja</strong>Senin–Jumat, libur 2 hari</span>
               </label>
               <label class="ot-radio">
-                <input type="radio" name="weekType" value="5" />
-                <span class="ot-radio-card"><strong>5 hari kerja</strong>Senin–Jumat, libur 2 hari</span>
+                <input type="radio" name="weekType" value="6" />
+                <span class="ot-radio-card"><strong>6 hari kerja</strong>Senin–Sabtu, libur 1 hari</span>
               </label>
             </div>
             <p class="ot-hint">Menentukan tingkatan kali upah untuk lembur di hari libur/akhir pekan.</p>
@@ -470,6 +502,12 @@
   <script>
     (function () {
       const salaryInput = document.getElementById('salary');
+      const basicSalaryInput = document.getElementById('basicSalary');
+      const locationAllowanceInput = document.getElementById('locationAllowance');
+      const salaryModeInputs = document.querySelectorAll('input[name="salaryMode"]');
+      const salaryDirectField = document.getElementById('salaryDirectField');
+      const salaryBreakdownFields = document.getElementById('salaryBreakdownFields');
+      const breakdownTotalEl = document.getElementById('breakdownTotal');
       const weekdayDaysEl = document.getElementById('weekdayDays');
       const weekendDaysEl = document.getElementById('weekendDays');
       const addWeekdayDayBtn = document.getElementById('addWeekdayDay');
@@ -575,6 +613,28 @@
         el.classList.add('flash');
       }
 
+      function getSalary() {
+        const mode = document.querySelector('input[name="salaryMode"]:checked').value;
+        if (mode === 'breakdown') {
+          return parseDigits(basicSalaryInput.value) + parseDigits(locationAllowanceInput.value);
+        }
+        return parseDigits(salaryInput.value);
+      }
+
+      function toggleSalaryMode() {
+        const mode = document.querySelector('input[name="salaryMode"]:checked').value;
+        salaryDirectField.style.display = mode === 'direct' ? '' : 'none';
+        salaryBreakdownFields.style.display = mode === 'breakdown' ? '' : 'none';
+      }
+
+      function bindRupiahInput(input) {
+        input.addEventListener('input', () => {
+          const digits = input.value.replace(/\D/g, '');
+          input.value = digits ? rupiahFmt.format(parseInt(digits, 10)) : '';
+          calculate();
+        });
+      }
+
       function getDayHours(container) {
         return Array.from(container.querySelectorAll('.ot-day-input')).map((i) => parseHours(i.value));
       }
@@ -620,7 +680,10 @@
       }
 
       function calculate() {
-        const salary = parseDigits(salaryInput.value);
+        const salary = getSalary();
+        breakdownTotalEl.textContent = formatRupiah(
+          parseDigits(basicSalaryInput.value) + parseDigits(locationAllowanceInput.value)
+        );
         const weekType = document.querySelector('input[name="weekType"]:checked').value;
         const weekdayHours = getDayHours(weekdayDaysEl);
         const weekendHours = getDayHours(weekendDaysEl);
@@ -647,21 +710,29 @@
         warningEl.classList.toggle('show', totalHours > MAX_WEEKLY_HOURS || wd.anyOverDaily || we.anyOverDaily);
       }
 
-      salaryInput.addEventListener('input', () => {
-        const digits = salaryInput.value.replace(/\D/g, '');
-        salaryInput.value = digits ? rupiahFmt.format(parseInt(digits, 10)) : '';
-        calculate();
-      });
+      bindRupiahInput(salaryInput);
+      bindRupiahInput(basicSalaryInput);
+      bindRupiahInput(locationAllowanceInput);
       weekTypeInputs.forEach((r) => r.addEventListener('change', calculate));
+      salaryModeInputs.forEach((r) =>
+        r.addEventListener('change', () => {
+          toggleSalaryMode();
+          calculate();
+        })
+      );
 
       addWeekdayDayBtn.addEventListener('click', () => addDayRow(weekdayDaysEl, addWeekdayDayBtn));
       addWeekendDayBtn.addEventListener('click', () => addDayRow(weekendDaysEl, addWeekendDayBtn));
 
       resetBtn.addEventListener('click', () => {
         salaryInput.value = '';
+        basicSalaryInput.value = '';
+        locationAllowanceInput.value = '';
+        document.querySelector('input[name="salaryMode"][value="direct"]').checked = true;
+        toggleSalaryMode();
         resetDays(weekdayDaysEl, addWeekdayDayBtn);
         resetDays(weekendDaysEl, addWeekendDayBtn);
-        document.querySelector('input[name="weekType"][value="6"]').checked = true;
+        document.querySelector('input[name="weekType"][value="5"]').checked = true;
         calculate();
       });
 
