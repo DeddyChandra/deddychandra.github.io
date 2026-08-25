@@ -562,6 +562,47 @@
         return Number.isFinite(n) && n > 0 ? n : 0;
       }
 
+      // ----- Cookie persistence (lembur hari kerja & akhir pekan only) -----
+      const COOKIE_WEEKDAY = 'lemburWeekdayHours';
+      const COOKIE_WEEKEND = 'lemburWeekendHours';
+      const COOKIE_MAX_AGE_DAYS = 365;
+
+      function setCookie(name, value, days) {
+        const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+        document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/; samesite=lax';
+      }
+
+      function getCookie(name) {
+        const match = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'));
+        return match ? decodeURIComponent(match[1]) : null;
+      }
+
+      function saveDaysToCookies() {
+        setCookie(COOKIE_WEEKDAY, JSON.stringify(getDayHours(weekdayDaysEl)), COOKIE_MAX_AGE_DAYS);
+        setCookie(COOKIE_WEEKEND, JSON.stringify(getDayHours(weekendDaysEl)), COOKIE_MAX_AGE_DAYS);
+      }
+
+      // Rebuilds a day list from saved hours; returns true if it restored anything.
+      function loadDaysFromCookie(cookieName, container, btn) {
+        const raw = getCookie(cookieName);
+        if (!raw) return false;
+        let hours;
+        try {
+          hours = JSON.parse(raw);
+        } catch (e) {
+          return false;
+        }
+        if (!Array.isArray(hours) || !hours.length) return false;
+        container.innerHTML = '';
+        hours.slice(0, MAX_DAYS).forEach((h) => {
+          addDayRow(container, btn);
+          const rows = container.querySelectorAll('.ot-day-row');
+          const input = rows[rows.length - 1].querySelector('.ot-day-input');
+          if (h > 0) input.value = h;
+        });
+        return true;
+      }
+
       // Applies tier caps within a single day (tiers always restart per day).
       function calcTiered(hours, tiers, hourlyWage) {
         let remaining = hours;
@@ -708,6 +749,8 @@
         [totalOvertimeEl, totalSalaryEl].forEach(flash);
 
         warningEl.classList.toggle('show', totalHours > MAX_WEEKLY_HOURS || wd.anyOverDaily || we.anyOverDaily);
+
+        saveDaysToCookies();
       }
 
       bindRupiahInput(salaryInput);
@@ -736,8 +779,12 @@
         calculate();
       });
 
-      addDayRow(weekdayDaysEl, addWeekdayDayBtn);
-      addDayRow(weekendDaysEl, addWeekendDayBtn);
+      if (!loadDaysFromCookie(COOKIE_WEEKDAY, weekdayDaysEl, addWeekdayDayBtn)) {
+        addDayRow(weekdayDaysEl, addWeekdayDayBtn);
+      }
+      if (!loadDaysFromCookie(COOKIE_WEEKEND, weekendDaysEl, addWeekendDayBtn)) {
+        addDayRow(weekendDaysEl, addWeekendDayBtn);
+      }
       calculate();
     })();
   </script>
