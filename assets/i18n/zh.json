@@ -14,6 +14,7 @@
     "now": "近况",
     "uses": "装备",
     "lembur": "加班计算",
+    "calendar": "农历",
     "resume": "简历",
     "back": "返回首页"
   },
@@ -203,5 +204,28 @@
     "subtitle": "来自一线的笔记 — 后端系统、复盘和值得分享的想法。",
     "empty": "还没有文章。第一篇正在路上。",
     "back": "← 全部文章"
+  },
+  "calendar": {
+    "title": "农历倒计时",
+    "subtitle": "两个我一直关注的农历日子 — 春节和大峰祖师圣诞。日期全部由农历推算得出,并非写死,过去的会自动消失,列表自动往后滚动。",
+    "tz": "所有时间均为西印尼时间 WIB (UTC+7) · 雅加达",
+    "cny_eyebrow": "// 节日 01",
+    "cny_name": "春节",
+    "cny_note": "<strong>春节</strong>为农历正月初一,即最接近立春的那个朔日,因此对应的公历日期会在一月下旬至二月下旬之间浮动。每年各有自己的<strong>干支</strong>与生肖,见上方标签。",
+    "df_eyebrow": "// 节日 02",
+    "df_name": "大峰祖师圣诞",
+    "df_img_alt": "宋大峰祖师",
+    "df_note": "<strong>宋大峰祖师</strong>(1039–1127)— 北宋高僧,于潮阳蚝坪(今和平)施医赠药、收殓赈灾,并在练江上募建和平桥。乡民为报其功德建<strong>报德堂</strong>,成为潮汕第一所善堂,亦是海内外数百所善堂之鼻祖,香港、泰国、新加坡及印尼潮人皆有奉祀。圣诞日为农历十月廿九。",
+    "u_days": "天",
+    "u_hours": "时",
+    "u_mins": "分",
+    "u_secs": "秒",
+    "next10": "未来 10 年",
+    "days_short": "天后",
+    "today_short": "今天",
+    "zodiac_fmt": "{gz} · {animal}年",
+    "today_cny": "新年快乐 — 就是今天!",
+    "today_df": "大峰祖师圣诞 — 就是今天!",
+    "how": "<strong>实现方式:</strong>日期在页面加载时由 <a href=\"https://github.com/6tail/lunar-javascript\" target=\"_blank\" rel=\"noopener\">lunar-javascript</a> 推算 — 春节为<code>农历正月初一</code>,大峰祖师圣诞为<code>农历十月廿九</code>。没有任何写死的日期,已过去的自动移除,并始终显示未来十次。倒计时目标为各日期的 <code>00:00 WIB</code>,与你设备的时区无关。"
   }
 }

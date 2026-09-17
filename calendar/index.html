@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lunar Calendar Countdown — Deddy Chandra</title>
+  <meta name="description" content="Live countdown to Chinese New Year (春节) and the birthday of Song Dafeng Zushi (大峰祖师圣诞, 农历十月廿九), computed from the Chinese lunar calendar. All times in WIB (UTC+7)." />
+  <meta name="theme-color" content="#07090f" />
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <script src="/assets/js/theme.js"></script>
+  <style>
+    /* ----- Lunar calendar countdown (scoped to this page) ----- */
+    .cal-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+      margin-top: 44px;
+    }
+    @media (max-width: 980px) {
+      .cal-grid { grid-template-columns: 1fr; gap: 20px; }
+    }
+
+    .cal-card {
+      position: relative;
+      overflow: hidden;
+      padding: 0; /* cards are <section> — drop the global section padding */
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: var(--shadow-lg);
+      color: #fff;
+      isolation: isolate;
+    }
+    .cal-card-body {
+      position: relative;
+      z-index: 2;
+      padding: 30px 26px 26px;
+    }
+    @media (max-width: 520px) {
+      .cal-card-body { padding: 24px 18px 20px; }
+    }
+
+    /* Decorative layers */
+    .cal-bg, .cal-bg-pattern, .cal-bg-glow {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* --- Card 1: Chinese New Year (red / gold) --- */
+    .cal-cny .cal-bg {
+      background:
+        radial-gradient(120% 90% at 15% 0%, #b81f28 0%, #8c111c 45%, #5d0a13 100%);
+    }
+    .cal-cny .cal-bg-pattern {
+      /* Interlocking "coin" lattice — classic 春节 motif, drawn in CSS */
+      background-image:
+        radial-gradient(circle at 0 0, rgba(255, 214, 132, 0.16) 1.5px, transparent 1.6px),
+        radial-gradient(circle at 22px 22px, rgba(255, 214, 132, 0.16) 1.5px, transparent 1.6px),
+        linear-gradient(45deg, transparent 47%, rgba(255, 214, 132, 0.07) 47%, rgba(255, 214, 132, 0.07) 53%, transparent 53%),
+        linear-gradient(-45deg, transparent 47%, rgba(255, 214, 132, 0.07) 47%, rgba(255, 214, 132, 0.07) 53%, transparent 53%);
+      background-size: 44px 44px, 44px 44px, 44px 44px, 44px 44px;
+      opacity: 0.9;
+    }
+    .cal-cny .cal-bg-glow {
+      background:
+        radial-gradient(60% 40% at 85% 8%, rgba(255, 199, 88, 0.35) 0%, transparent 70%),
+        radial-gradient(40% 30% at 10% 95%, rgba(255, 140, 90, 0.22) 0%, transparent 70%);
+    }
+    /* Hanging lanterns, pure CSS */
+    .cal-lantern {
+      position: absolute;
+      top: -14px;
+      z-index: 1;
+      width: 34px;
+      pointer-events: none;
+      transform-origin: top center;
+      animation: cal-sway 5.5s ease-in-out infinite;
+    }
+    .cal-lantern::before {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 26px;
+      margin: 0 auto;
+      background: rgba(255, 214, 132, 0.5);
+    }
+    .cal-lantern::after {
+      content: '';
+      display: block;
+      height: 44px;
+      border-radius: 50% / 38%;
+      background: linear-gradient(180deg, #e8474f 0%, #c31f2a 55%, #8e1018 100%);
+      box-shadow:
+        inset 0 0 0 2px rgba(255, 214, 132, 0.55),
+        0 0 22px rgba(255, 168, 76, 0.45);
+    }
+    .cal-lantern.l2 { width: 24px; animation-delay: -1.8s; animation-duration: 6.5s; }
+    .cal-lantern.l3 { width: 18px; animation-delay: -3.4s; animation-duration: 7.5s; }
+    .cal-lantern.l1 { right: 26px; }
+    .cal-lantern.l2 { right: 74px; top: -22px; }
+    .cal-lantern.l3 { right: 112px; top: -4px; }
+    @keyframes cal-sway {
+      0%, 100% { transform: rotate(-4deg); }
+      50%      { transform: rotate(4deg); }
+    }
+    @media (max-width: 520px) {
+      .cal-lantern.l3 { display: none; }
+    }
+
+    /* --- Card 2: 大峰祖师 (temple indigo / incense gold) --- */
+    .cal-df .cal-bg {
+      background:
+        radial-gradient(120% 90% at 85% 0%, #1d3a57 0%, #14263d 45%, #0a1522 100%);
+    }
+    .cal-df .cal-bg-pattern {
+      /* Temple-roof / tile ridges + incense haze */
+      background-image:
+        repeating-linear-gradient(90deg, rgba(212, 175, 118, 0.08) 0 1px, transparent 1px 26px),
+        repeating-linear-gradient(0deg, rgba(212, 175, 118, 0.05) 0 1px, transparent 1px 26px);
+    }
+    .cal-df .cal-bg-glow {
+      background:
+        radial-gradient(55% 45% at 78% 12%, rgba(212, 175, 118, 0.3) 0%, transparent 70%),
+        radial-gradient(45% 35% at 8% 90%, rgba(86, 160, 168, 0.2) 0%, transparent 70%);
+    }
+    /* Rising incense smoke */
+    .cal-smoke {
+      position: absolute;
+      bottom: -40px;
+      left: 12%;
+      z-index: 1;
+      width: 120px;
+      height: 220px;
+      pointer-events: none;
+      background: radial-gradient(50% 50% at 50% 100%, rgba(255, 255, 255, 0.1) 0%, transparent 72%);
+      filter: blur(6px);
+      animation: cal-rise 9s ease-in-out infinite;
+    }
+    .cal-smoke.s2 { left: 42%; width: 90px; animation-delay: -4.5s; }
+    @keyframes cal-rise {
+      0%   { transform: translateY(20px) scaleX(0.85); opacity: 0.25; }
+      50%  { transform: translateY(-20px) scaleX(1.1); opacity: 0.55; }
+      100% { transform: translateY(20px) scaleX(0.85); opacity: 0.25; }
+    }
+
+    /* --- Card header --- */
+    .cal-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .cal-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.85;
+      margin-bottom: 6px;
+    }
+    .cal-name {
+      font-size: clamp(1.35rem, 3.4vw, 1.75rem);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+    .cal-name-zh {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 600;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+    .cal-rule {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 12px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+    .cal-rule svg { width: 13px; height: 13px; flex: none; }
+
+    /* Portrait (大峰祖师) */
+    .cal-portrait {
+      flex: none;
+      width: 100px;
+      height: 136px;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(212, 175, 118, 0.45);
+      box-shadow: 0 0 0 3px rgba(212, 175, 118, 0.1), 0 10px 26px rgba(0, 0, 0, 0.45);
+    }
+    .cal-portrait img {
+      width: 100%;
+      height: 100%;
+      /* contain, not cover — keeps the whole figure (crown to feet) visible */
+      object-fit: contain;
+      display: block;
+      background: #f3ece0;
+    }
+    .cal-portrait-fallback {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: center;
+      padding: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      line-height: 1.35;
+      color: rgba(240, 220, 180, 0.8);
+      background: linear-gradient(180deg, rgba(212, 175, 118, 0.14), rgba(0, 0, 0, 0.32));
+    }
+    .cal-portrait-fallback svg { width: 26px; height: 26px; opacity: 0.8; }
+    .cal-portrait.missing img { display: none; }
+    .cal-portrait.missing .cal-portrait-fallback { display: flex; }
+    @media (max-width: 520px) {
+      .cal-portrait { width: 76px; height: 104px; }
+    }
+
+    /* --- Countdown --- */
+    .cal-countdown {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .cal-unit {
+      text-align: center;
+      padding: 14px 4px 10px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(3px);
+    }
+    .cal-unit-num {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: clamp(1.5rem, 6.4vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+    .cal-unit-label {
+      display: block;
+      margin-top: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.7;
+    }
+    .cal-tick { animation: cal-pulse 0.6s ease; }
+    @keyframes cal-pulse {
+      0% { text-shadow: 0 0 18px currentColor; }
+      100% { text-shadow: none; }
+    }
+
+    /* --- Target date line --- */
+    .cal-target {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.26);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .cal-target-day {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+    .cal-target-meta {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      opacity: 0.78;
+      margin-top: 4px;
+    }
+    .cal-today-badge {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .cal-card.is-today .cal-today-badge { display: flex; }
+
+    /* --- 10-year list --- */
+    .cal-list { margin-top: 18px; }
+    .cal-list > summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: rgba(0, 0, 0, 0.26);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: background var(--transition);
+    }
+    .cal-list > summary::-webkit-details-marker { display: none; }
+    .cal-list > summary:hover { background: rgba(0, 0, 0, 0.4); }
+    .cal-list > summary svg {
+      width: 14px;
+      height: 14px;
+      flex: none;
+      transition: transform var(--transition);
+    }
+    .cal-list[open] > summary svg { transform: rotate(180deg); }
+    .cal-rows { margin-top: 10px; }
+    .cal-row {
+      display: grid;
+      grid-template-columns: 3.4rem minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: baseline;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .cal-row + .cal-row { margin-top: 2px; }
+    .cal-row:nth-child(odd) { background: rgba(0, 0, 0, 0.18); }
+    .cal-row-year {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      opacity: 0.7;
+    }
+    .cal-row-date { font-weight: 600; }
+    .cal-row-weekday {
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 400;
+      opacity: 0.72;
+    }
+    .cal-row-away {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      opacity: 0.66;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .cal-row.is-next {
+      background: rgba(255, 255, 255, 0.16);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+    }
+    .cal-row.is-next .cal-row-year,
+    .cal-row.is-next .cal-row-away { opacity: 0.9; }
+    @media (max-width: 340px) {
+      .cal-row { grid-template-columns: 3rem minmax(0, 1fr); }
+      .cal-row-away { grid-column: 2; text-align: left; }
+    }
+
+    .cal-note {
+      margin-top: 18px;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      opacity: 0.78;
+    }
+    .cal-note a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+    .cal-tz {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .cal-tz svg { width: 14px; height: 14px; color: var(--accent); }
+
+    .cal-how {
+      margin-top: 34px;
+      padding: 20px 22px;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+    .cal-how strong { color: var(--text-strong); }
+    .cal-how code {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 1px 6px;
+      border-radius: 5px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--accent);
+    }
+    .cal-how a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="nav-brand-mark">DC</span>
+        <span>Deddy Chandra</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a class="nav-link" href="/#about" data-num="01." data-i18n="nav.about">About</a></li>
+        <li><a class="nav-link" href="/#work" data-num="03." data-i18n="nav.work">Work</a></li>
+        <li><a class="nav-link" href="/#projects" data-num="05." data-i18n="nav.projects">Projects</a></li>
+        <li><a class="nav-link" href="/blog/" data-num="·" data-i18n="nav.blog">Blog</a></li>
+        <li><a class="nav-link" href="/now.html" data-num="·" data-i18n="nav.now">Now</a></li>
+        <li><a class="nav-link" href="/uses.html" data-num="·" data-i18n="nav.uses">Uses</a></li>
+        <li><a class="nav-link" href="/lembur/" data-num="·" data-i18n="nav.lembur">Lembur</a></li>
+        <li><a class="nav-link active" href="/calendar/" data-num="·" data-i18n="nav.calendar">Calendar</a></li>
+      </ul>
+      <div class="nav-actions">
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="zh">中</button>
+          <button class="lang-btn" data-lang="id">ID</button>
+        </div>
+        <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 140px; padding-bottom: 80px;">
+    <p class="section-eyebrow">// 农历 lunar calendar</p>
+    <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 12px;" data-i18n="calendar.title">Lunar countdown</h1>
+    <p class="text-muted" data-i18n="calendar.subtitle">Two dates I keep an eye on, tracked straight off the Chinese lunar calendar — Chinese New Year and the birthday of Song Dafeng Zushi. Dates are computed, never hardcoded, so the list rolls forward on its own.</p>
+    <p class="cal-tz">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <span data-i18n="calendar.tz">All times in WIB (UTC+7) · Jakarta</span>
+    </p>
+
+    <div class="cal-grid">
+      <!-- ============ Chinese New Year ============ -->
+      <section class="cal-card cal-cny" id="card-cny">
+        <div class="cal-bg" aria-hidden="true"></div>
+        <div class="cal-bg-pattern" aria-hidden="true"></div>
+        <div class="cal-bg-glow" aria-hidden="true"></div>
+        <div class="cal-lantern l1" aria-hidden="true"></div>
+        <div class="cal-lantern l2" aria-hidden="true"></div>
+        <div class="cal-lantern l3" aria-hidden="true"></div>
+
+        <div class="cal-card-body">
+          <div class="cal-head">
+            <div>
+              <p class="cal-eyebrow" data-i18n="calendar.cny_eyebrow">// festival 01</p>
+              <h2 class="cal-name">
+                <span data-i18n="calendar.cny_name">Chinese New Year</span>
+                <span class="cal-name-zh">春节 · 农历正月初一</span>
+              </h2>
+              <p class="cal-rule">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
+                <span id="cny-zodiac">—</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="cal-countdown" id="cny-countdown">
+            <div class="cal-unit"><span class="cal-unit-num" data-unit="d">--</span><span class="cal-unit-label" data-i18n="calendar.u_days">Days</span></div>
+            <div class="cal-unit"><span class="cal-unit-num" data-unit="h">--</span><span class="cal-unit-label" data-i18n="calendar.u_hours">Hours</span></div>
+            <div class="cal-unit"><span class="cal-unit-num" data-unit="m">--</span><span class="cal-unit-label" data-i18n="calendar.u_mins">Mins</span></div>
+            <div class="cal-unit"><span class="cal-unit-num" data-unit="s">--</span><span class="cal-unit-label" data-i18n="calendar.u_secs">Secs</span></div>
+          </div>
+
+          <p class="cal-today-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 2l2.4 7.2H22l-6.2 4.5 2.4 7.3L12 16.5 5.8 21l2.4-7.3L2 9.2h7.6z"/></svg>
+            <span data-i18n="calendar.today_cny">新年快乐 — it's today!</span>
+          </p>
+
+          <div class="cal-target">
+            <p class="cal-target-day" id="cny-day">—</p>
+            <p class="cal-target-meta" id="cny-meta">—</p>
+          </div>
+
+          <details class="cal-list">
+            <summary>
+              <span data-i18n="calendar.next10">Next 10 years</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="cal-rows" id="cny-rows"></div>
+          </details>
+
+          <p class="cal-note" data-i18n-html="calendar.cny_note">
+            <strong>春节</strong> falls on the first day of the first lunar month — the new moon closest to the start of spring,
+            which is why it drifts between late January and late February on the Gregorian calendar. Each year carries its own
+            <strong>干支</strong> pairing and zodiac animal, shown above.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ 大峰祖师圣诞 ============ -->
+      <section class="cal-card cal-df" id="card-df">
+        <div class="cal-bg" aria-hidden="true"></div>
+        <div class="cal-bg-pattern" aria-hidden="true"></div>
+        <div class="cal-bg-glow" aria-hidden="true"></div>
+        <div class="cal-smoke" aria-hidden="true"></div>
+        <div class="cal-smoke s2" aria-hidden="true"></div>
+
+        <div class="cal-card-body">
+          <div class="cal-head">
+            <div class="cal-portrait" id="df-portrait">
+              <img src="/assets/img/dafeng-zushi.jpg" alt="宋大峰祖师" data-i18n-attr="alt:calendar.df_img_alt"
+                   onerror="this.closest('.cal-portrait').classList.add('missing')" />
+              <span class="cal-portrait-fallback">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 5-9 4-9-4z"/><path d="M5 11v8h14v-8"/><path d="M10 19v-4h4v4"/></svg>
+                <span>大峰祖师</span>
+              </span>
+            </div>
+            <div>
+              <p class="cal-eyebrow" data-i18n="calendar.df_eyebrow">// festival 02</p>
+              <h2 class="cal-name">
+                <span data-i18n="calendar.df_name">Song Dafeng Zushi's Birthday</span>
+                <span class="cal-name-zh">大峰祖师圣诞 · 农历十月廿九</span>
+              </h2>
+              <p class="cal-rule">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
+                <span id="df-lunar">—</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="cal-countdown" id="df-countdown">
+            <div class="cal-unit"><span class="cal-unit-num" data-unit="d">--</span><span class="cal-unit-label" data-i18n="calendar.u_days">Days</span></div>
+            <div class="cal-unit"><span class="cal-unit-num" data-unit="h">--</span><span class="cal-unit-label" data-i18n="calendar.u_hours">Hours</span></div>
+            <div class="cal-unit"><span class="cal-unit-num" data-unit="m">--</span><span class="cal-unit-label" data-i18n="calendar.u_mins">Mins</span></div>
+            <div class="cal-unit"><span class="cal-unit-num" data-unit="s">--</span><span class="cal-unit-label" data-i18n="calendar.u_secs">Secs</span></div>
+          </div>
+
+          <p class="cal-today-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 3v6M12 21v-6M7 9h10l-1.6 6H8.6z"/></svg>
+            <span data-i18n="calendar.today_df">大峰祖师圣诞 — it's today!</span>
+          </p>
+
+          <div class="cal-target">
+            <p class="cal-target-day" id="df-day">—</p>
+            <p class="cal-target-meta" id="df-meta">—</p>
+          </div>
+
+          <details class="cal-list">
+            <summary>
+              <span data-i18n="calendar.next10">Next 10 years</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="cal-rows" id="df-rows"></div>
+          </details>
+
+          <p class="cal-note" data-i18n-html="calendar.df_note">
+            <strong>宋大峰祖师</strong> (1039–1127) — the Song-dynasty monk who built the bridge at Hepin (和平) across the Lian River in Chaoyang and gave out medicine, burials and famine relief to the poor. Locals raised <strong>报德堂</strong> in his memory: the first charity hall (善堂) in Chaoshan, and the ancestor of hundreds more across Teochew communities in Hong Kong, Thailand, Singapore and Indonesia. His birthday falls on the 29th day of the 10th lunar month.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <p class="cal-how" data-i18n-html="calendar.how">
+      <strong>How this works:</strong> dates are derived at page load with
+      <a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noopener">lunar-javascript</a>
+      — Chinese New Year is <code>lunar 1/1</code>, 大峰祖师圣诞 is <code>lunar 10/29</code>. Nothing is hardcoded, so
+      occurrences that have already passed drop off the list automatically and the next ten always roll forward. Countdowns
+      target <code>00:00 WIB</code> of each date regardless of your device timezone.
+    </p>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-text">
+        <span data-i18n="footer.tagline">Designed &amp; built in Jakarta</span>
+        &nbsp;·&nbsp;
+        <span>© <span data-year>2026</span> Deddy Chandra</span>
+      </div>
+      <div class="footer-socials">
+        <a class="icon-btn" href="/" aria-label="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/i18n.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/vendor/lunar.min.js"></script>
+  <script>
+    /* ------------------------------------------------------------------
+       Lunar countdown.
+
+       Dates are never hardcoded: the only fixed things are the two lunar
+       rules (正月初一 and 十月廿九). Everything else — Gregorian date,
+       weekday, zodiac — is computed by lunar-javascript at runtime, so an
+       occurrence that has already passed simply drops out of the list.
+       ------------------------------------------------------------------ */
+    (function () {
+      const WIB_OFFSET_MS = 7 * 60 * 60 * 1000; // hardcoded UTC+7
+      const DAY_MS = 24 * 60 * 60 * 1000;
+      const HORIZON = 12; // lunar years to scan ahead (need 10 future ones)
+
+      // Lunar rules: [lunar month, lunar day]
+      const FESTIVALS = {
+        cny: { month: 1, day: 1 },
+        df: { month: 10, day: 29 },
+      };
+
+      const LOCALES = { en: 'en-GB', zh: 'zh-CN', id: 'id-ID' };
+      const TZ = 'Asia/Jakarta';
+
+      // 00:00:00 WIB of a Gregorian y/m/d, as an absolute instant.
+      const wibMidnight = (y, m, d) => new Date(Date.UTC(y, m - 1, d) - WIB_OFFSET_MS);
+
+      // Current calendar year in WIB (not the visitor's local year).
+      const wibYearNow = () => new Date(Date.now() + WIB_OFFSET_MS).getUTCFullYear();
+
+      function lang() {
+        const l = (window.I18N && window.I18N.current) || 'en';
+        return LOCALES[l] ? l : 'en';
+      }
+      function t(key, fallback) {
+        const v = window.I18N && window.I18N.get ? window.I18N.get(key) : undefined;
+        return typeof v === 'string' ? v : fallback;
+      }
+
+      // All occurrences of a lunar rule that have not finished yet, soonest first.
+      function occurrences(rule) {
+        const now = Date.now();
+        const from = wibYearNow() - 1; // -1: a late-year date may still be ahead
+        const out = [];
+        for (let ly = from; ly <= from + HORIZON + 1; ly++) {
+          let lunar;
+          try {
+            lunar = Lunar.fromYmd(ly, rule.month, rule.day);
+          } catch (e) {
+            continue; // rule doesn't exist in this lunar year
+          }
+          const solar = lunar.getSolar();
+          const start = wibMidnight(solar.getYear(), solar.getMonth(), solar.getDay());
+          if (start.getTime() + DAY_MS <= now) continue; // the whole day is over
+          out.push({ lunar: lunar, solar: solar, start: start });
+        }
+        out.sort((a, b) => a.start - b.start);
+        return out.slice(0, 10);
+      }
+
+      // Localized "Monday, 7 December 2026", rendered in WIB.
+      function formatDay(date, opts) {
+        return new Intl.DateTimeFormat(LOCALES[lang()], Object.assign({ timeZone: TZ }, opts)).format(date);
+      }
+
+      function pad(n) {
+        return String(n).padStart(2, '0');
+      }
+
+      const cards = [
+        { key: 'cny', rule: FESTIVALS.cny, el: document.getElementById('card-cny'), rowsEl: document.getElementById('cny-rows'), dayEl: document.getElementById('cny-day'), metaEl: document.getElementById('cny-meta'), badgeEl: document.getElementById('cny-zodiac') },
+        { key: 'df', rule: FESTIVALS.df, el: document.getElementById('card-df'), rowsEl: document.getElementById('df-rows'), dayEl: document.getElementById('df-day'), metaEl: document.getElementById('df-meta'), badgeEl: document.getElementById('df-lunar') },
+      ];
+
+      cards.forEach((c) => {
+        c.nums = {};
+        c.el.querySelectorAll('.cal-unit-num').forEach((el) => (c.nums[el.dataset.unit] = el));
+      });
+
+      // ---- Rebuild everything that depends on dates or language ----
+      function render() {
+        cards.forEach((c) => {
+          c.items = occurrences(c.rule);
+          const next = c.items[0];
+          if (!next) return;
+
+          const lunarLabel = next.lunar.getMonthInChinese() + '月' + next.lunar.getDayInChinese();
+          if (c.key === 'cny') {
+            // e.g. "丁未 · Year of the Goat" / "丁未 · 羊年" / "丁未 · Tahun Kambing"
+            const animalZh = next.lunar.getYearShengXiao();
+            c.badgeEl.textContent = t('calendar.zodiac_fmt', '{gz} · Year of the {animal}')
+              .replace('{gz}', next.lunar.getYearInGanZhi())
+              .replace('{animal}', t('calendar.zodiac.' + animalZh, animalZh));
+          } else {
+            c.badgeEl.textContent = lunarLabel;
+          }
+
+          c.dayEl.textContent = formatDay(next.start, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+          c.metaEl.textContent = next.solar.toYmd() + ' · ' + lunarLabel + ' · 00:00 WIB';
+
+          c.rowsEl.innerHTML = '';
+          c.items.forEach((item, i) => {
+            const away = Math.ceil((item.start.getTime() - Date.now()) / DAY_MS);
+            const row = document.createElement('div');
+            row.className = 'cal-row' + (i === 0 ? ' is-next' : '');
+            const year = document.createElement('span');
+            year.className = 'cal-row-year';
+            year.textContent = item.solar.getYear();
+            const date = document.createElement('span');
+            date.className = 'cal-row-date';
+            date.textContent = formatDay(item.start, { day: 'numeric', month: 'short' });
+            const weekday = document.createElement('span');
+            weekday.className = 'cal-row-weekday';
+            weekday.textContent = formatDay(item.start, { weekday: 'long' });
+            date.appendChild(weekday);
+            const awayEl = document.createElement('span');
+            awayEl.className = 'cal-row-away';
+            awayEl.textContent =
+              away <= 0 ? t('calendar.today_short', 'today') : away + ' ' + t('calendar.days_short', 'days');
+            row.append(year, date, awayEl);
+            c.rowsEl.appendChild(row);
+          });
+        });
+        tick();
+      }
+
+      // ---- Per-second countdown ----
+      function tick() {
+        const now = Date.now();
+        let stale = false;
+
+        cards.forEach((c) => {
+          const next = c.items && c.items[0];
+          if (!next) return;
+
+          const start = next.start.getTime();
+          if (start + DAY_MS <= now) {
+            stale = true; // the date just finished — recompute the whole list
+            return;
+          }
+
+          const isToday = now >= start;
+          c.el.classList.toggle('is-today', isToday);
+
+          let left = Math.max(0, start - now);
+          const d = Math.floor(left / DAY_MS);
+          const h = Math.floor((left % DAY_MS) / 3600000);
+          const m = Math.floor((left % 3600000) / 60000);
+          const s = Math.floor((left % 60000) / 1000);
+
+          set(c.nums.d, String(d));
+          set(c.nums.h, pad(h));
+          set(c.nums.m, pad(m));
+          set(c.nums.s, pad(s));
+        });
+
+        if (stale) render();
+      }
+
+      function set(el, value) {
+        if (!el || el.textContent === value) return;
+        el.textContent = value;
+        el.classList.remove('cal-tick');
+        void el.offsetWidth;
+        el.classList.add('cal-tick');
+      }
+
+      // Re-render on language switch: I18N.apply() runs on every load(lang).
+      if (window.I18N && typeof window.I18N.apply === 'function') {
+        const apply = window.I18N.apply.bind(window.I18N);
+        window.I18N.apply = function () {
+          apply();
+          render();
+        };
+      }
+
+      render();
+      setInterval(tick, 1000);
+    })();
+  </script>
+</body>
+</html>

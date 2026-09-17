@@ -14,6 +14,7 @@
     "now": "Now",
     "uses": "Uses",
     "lembur": "Lembur",
+    "calendar": "Calendar",
     "resume": "Resume",
     "back": "Back to home"
   },
@@ -203,5 +204,42 @@
     "subtitle": "Notes from the trenches — backend systems, postmortems, and ideas worth sharing.",
     "empty": "No posts yet. First one coming soon.",
     "back": "← All posts"
+  },
+  "calendar": {
+    "title": "Lunar countdown",
+    "subtitle": "Two dates I keep an eye on, tracked straight off the Chinese lunar calendar — Chinese New Year and the birthday of Song Dafeng Zushi. Dates are computed, never hardcoded, so the list rolls forward on its own.",
+    "tz": "All times in WIB (UTC+7) · Jakarta",
+    "cny_eyebrow": "// festival 01",
+    "cny_name": "Chinese New Year",
+    "cny_note": "<strong>春节</strong> falls on the first day of the first lunar month — the new moon closest to the start of spring, which is why it drifts between late January and late February on the Gregorian calendar. Each year carries its own <strong>干支</strong> pairing and zodiac animal, shown above.",
+    "df_eyebrow": "// festival 02",
+    "df_name": "Song Dafeng Zushi's Birthday",
+    "df_img_alt": "Song Dafeng Zushi (宋大峰祖师)",
+    "df_note": "<strong>宋大峰祖师</strong> (1039–1127) — the Song-dynasty monk who built the bridge at Hepin (和平) across the Lian River in Chaoyang and gave out medicine, burials and famine relief to the poor. Locals raised <strong>报德堂</strong> in his memory: the first charity hall (善堂) in Chaoshan, and the ancestor of hundreds more across Teochew communities in Hong Kong, Thailand, Singapore and Indonesia. His birthday falls on the 29th day of the 10th lunar month.",
+    "u_days": "Days",
+    "u_hours": "Hours",
+    "u_mins": "Mins",
+    "u_secs": "Secs",
+    "next10": "Next 10 years",
+    "days_short": "days",
+    "today_short": "today",
+    "zodiac_fmt": "{gz} · Year of the {animal}",
+    "zodiac": {
+      "鼠": "Rat",
+      "牛": "Ox",
+      "虎": "Tiger",
+      "兔": "Rabbit",
+      "龙": "Dragon",
+      "蛇": "Snake",
+      "马": "Horse",
+      "羊": "Goat",
+      "猴": "Monkey",
+      "鸡": "Rooster",
+      "狗": "Dog",
+      "猪": "Pig"
+    },
+    "today_cny": "新年快乐 — it's today!",
+    "today_df": "大峰祖师圣诞 — it's today!",
+    "how": "<strong>How this works:</strong> dates are derived at page load with <a href=\"https://github.com/6tail/lunar-javascript\" target=\"_blank\" rel=\"noopener\">lunar-javascript</a> — Chinese New Year is <code>lunar 1/1</code>, 大峰祖师圣诞 is <code>lunar 10/29</code>. Nothing is hardcoded, so occurrences that have already passed drop off the list automatically and the next ten always roll forward. Countdowns target <code>00:00 WIB</code> of each date regardless of your device timezone."
   }
 }
