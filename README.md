@@ -86,6 +86,25 @@ All countdowns and weekdays are computed in **WIB (UTC+7)**, hardcoded, so they 
 The 大峰祖师 portrait is expected at `assets/img/dafeng-zushi.jpg`. If the file is missing, the card falls back
 to a drawn emblem — drop the image in at that exact path and it appears automatically.
 
+## Sharing a page in a specific language
+
+Append `?lang=en`, `?lang=zh`, or `?lang=id` to any URL:
+
+```
+https://deddychandra.github.io/calendar/?lang=zh
+https://deddychandra.github.io/?lang=id#about
+```
+
+Precedence is `?lang=` → previously saved choice (localStorage) → browser language → English.
+
+Landing on a `?lang=` URL or clicking the switcher pins the language: the address bar is updated via
+`history.replaceState` and every internal link is rewritten to carry the param, so whatever the visitor copies
+while browsing stays in their language. A first visit without the param keeps the URL clean. `hreflang`
+alternates for all three languages are injected into `<head>` automatically.
+
+`/lembur/` is Indonesian-only and doesn't load `i18n.js`, so it ignores (and drops) the param — the saved
+choice still applies once you navigate back to a translated page.
+
 ## Adding a translation string
 
 1. Add the key to all three files: `assets/i18n/en.json`, `zh.json`, `id.json`.
