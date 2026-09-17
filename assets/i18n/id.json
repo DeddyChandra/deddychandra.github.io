@@ -14,6 +14,7 @@
     "now": "Sekarang",
     "uses": "Tools",
     "lembur": "Lembur",
+    "calendar": "Kalender",
     "resume": "CV",
     "back": "Kembali ke beranda"
   },
@@ -203,5 +204,42 @@
     "subtitle": "Catatan dari lapangan — sistem backend, postmortem, dan ide-ide yang layak dibagi.",
     "empty": "Belum ada tulisan. Yang pertama segera datang.",
     "back": "← Semua tulisan"
+  },
+  "calendar": {
+    "title": "Hitung mundur kalender lunar",
+    "subtitle": "Dua tanggal yang selalu saya pantau, dihitung langsung dari kalender lunar Tionghoa — Tahun Baru Imlek dan hari lahir Song Dafeng Zushi. Tanggalnya dihitung otomatis, tidak ditulis manual, jadi daftarnya bergulir sendiri.",
+    "tz": "Semua waktu dalam WIB (UTC+7) · Jakarta",
+    "cny_eyebrow": "// perayaan 01",
+    "cny_name": "Tahun Baru Imlek",
+    "cny_note": "<strong>春节</strong> jatuh pada hari pertama bulan pertama kalender lunar — bulan baru yang paling dekat dengan awal musim semi, sehingga tanggal Gregorian-nya bergeser antara akhir Januari dan akhir Februari. Tiap tahun punya pasangan <strong>干支</strong> dan hewan shio sendiri, seperti tampak di atas.",
+    "df_eyebrow": "// perayaan 02",
+    "df_name": "Hari Lahir Song Dafeng Zushi",
+    "df_img_alt": "Song Dafeng Zushi (宋大峰祖师)",
+    "df_note": "<strong>宋大峰祖师</strong> (1039–1127) — biksu era Dinasti Song yang membangun jembatan di Hepin (和平) menyeberangi Sungai Lian di Chaoyang, serta membagikan obat, pemakaman, dan bantuan bagi kaum miskin. Warga mendirikan <strong>报德堂</strong> untuk mengenangnya: balai amal (善堂) pertama di Chaoshan dan cikal bakal ratusan lainnya di komunitas Tiochiu di Hong Kong, Thailand, Singapura, dan Indonesia. Hari lahirnya jatuh pada hari ke-29 bulan ke-10 kalender lunar.",
+    "u_days": "Hari",
+    "u_hours": "Jam",
+    "u_mins": "Menit",
+    "u_secs": "Detik",
+    "next10": "10 tahun ke depan",
+    "days_short": "hari lagi",
+    "today_short": "hari ini",
+    "zodiac_fmt": "{gz} · Tahun {animal}",
+    "zodiac": {
+      "鼠": "Tikus",
+      "牛": "Kerbau",
+      "虎": "Macan",
+      "兔": "Kelinci",
+      "龙": "Naga",
+      "蛇": "Ular",
+      "马": "Kuda",
+      "羊": "Kambing",
+      "猴": "Monyet",
+      "鸡": "Ayam",
+      "狗": "Anjing",
+      "猪": "Babi"
+    },
+    "today_cny": "新年快乐 — hari ini!",
+    "today_df": "大峰祖师圣诞 — hari ini!",
+    "how": "<strong>Cara kerjanya:</strong> tanggal dihitung saat halaman dimuat memakai <a href=\"https://github.com/6tail/lunar-javascript\" target=\"_blank\" rel=\"noopener\">lunar-javascript</a> — Imlek adalah <code>lunar 1/1</code>, 大峰祖师圣诞 adalah <code>lunar 10/29</code>. Tidak ada tanggal yang ditulis manual, sehingga tanggal yang sudah lewat otomatis hilang dan sepuluh berikutnya selalu bergulir. Hitung mundur menuju <code>00:00 WIB</code> tiap tanggal, terlepas dari zona waktu perangkatmu."
   }
 }

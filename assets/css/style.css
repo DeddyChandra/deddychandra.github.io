@@ -219,6 +219,14 @@ p { color: var(--text-muted); }
   font-size: 1rem;
   color: var(--text-strong);
 }
+@media (min-width: 1101px) {
+  /* Keep the brand on one line once the full link bar is visible */
+  .nav-brand { flex: none; white-space: nowrap; }
+}
+@media (max-width: 480px) {
+  /* Mark only — leaves room for the menu toggle on small phones */
+  .nav-brand > span:not(.nav-brand-mark) { display: none; }
+}
 .nav-brand-mark {
   width: 32px;
   height: 32px;
@@ -258,6 +266,12 @@ p { color: var(--text-muted); }
 .nav-link:hover, .nav-link.active {
   color: var(--text-strong);
   background: var(--surface);
+}
+/* Tighten the bar so all links still fit on smaller laptops */
+@media (min-width: 1101px) and (max-width: 1340px) {
+  .nav-inner { gap: 12px; padding: 0 16px; }
+  .nav-link { padding: 8px 8px; gap: 4px; font-size: 0.85rem; }
+  .nav-link::before { display: none; }
 }
 
 .nav-actions {
@@ -317,7 +331,7 @@ p { color: var(--text-muted); }
   justify-content: center;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .nav-links {
     position: fixed;
     top: 64px;

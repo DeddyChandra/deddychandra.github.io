@@ -28,7 +28,9 @@ Live at **https://deddychandra.github.io/**
 │   ├── js/
 │   │   ├── theme.js        # dark/light toggle, runs early (no FOUC)
 │   │   ├── i18n.js         # data-i18n attribute loader
-│   │   └── main.js         # scroll reveal, mobile nav, age/yoe calc
+│   │   ├── main.js         # scroll reveal, mobile nav, age/yoe calc
+│   │   └── vendor/
+│   │       └── lunar.min.js # lunar-javascript (MIT) — used by /calendar/
 │   ├── i18n/
 │   │   ├── en.json         # English strings
 │   │   ├── zh.json         # 中文
@@ -36,6 +38,7 @@ Live at **https://deddychandra.github.io/**
 │   ├── img/                # favicon + portfolio images
 │   └── files/
 │       └── Deddy_Chandra_CV.pdf
+├── calendar/               # /calendar/ — lunar festival countdowns
 ├── ksei/                   # side project: KSEI PDF parser
 ├── trading/                # side project: IDX orderbook viewer
 ├── JossPaper.html          # side project: Joss paper converter
@@ -70,6 +73,37 @@ npx http-server -p 8000
      <span class="post-meta">5 min read</span>
    </a>
    ```
+
+## Lunar calendar page (`/calendar/`)
+
+Countdowns to Chinese New Year and 大峰祖师圣诞. Dates are **never hardcoded** — only the two lunar rules
+are (`lunar 1/1` and `lunar 10/29`); [lunar-javascript](https://github.com/6tail/lunar-javascript)
+(`assets/js/vendor/lunar.min.js`) converts them to Gregorian dates at page load. Occurrences whose day has
+finished drop off automatically and the next ten always roll forward, so the page never needs maintenance.
+
+All countdowns and weekdays are computed in **WIB (UTC+7)**, hardcoded, so they read the same on any device.
+
+The 大峰祖师 portrait is expected at `assets/img/dafeng-zushi.jpg`. If the file is missing, the card falls back
+to a drawn emblem — drop the image in at that exact path and it appears automatically.
+
+## Sharing a page in a specific language
+
+Append `?lang=en`, `?lang=zh`, or `?lang=id` to any URL:
+
+```
+https://deddychandra.github.io/calendar/?lang=zh
+https://deddychandra.github.io/?lang=id#about
+```
+
+Precedence is `?lang=` → previously saved choice (localStorage) → browser language → English.
+
+Landing on a `?lang=` URL or clicking the switcher pins the language: the address bar is updated via
+`history.replaceState` and every internal link is rewritten to carry the param, so whatever the visitor copies
+while browsing stays in their language. A first visit without the param keeps the URL clean. `hreflang`
+alternates for all three languages are injected into `<head>` automatically.
+
+`/lembur/` is Indonesian-only and doesn't load `i18n.js`, so it ignores (and drops) the param — the saved
+choice still applies once you navigate back to a translated page.
 
 ## Adding a translation string
 
