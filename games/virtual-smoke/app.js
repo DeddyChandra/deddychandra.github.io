@@ -45,6 +45,7 @@ const ctx = canvas.getContext("2d");
 const ui = {
   overlay: $("overlay-start"), startBtn: $("btn-start"), startError: $("start-error"),
   status: $("status"), statusText: $("status-text"), toast: $("toast"),
+  infoBtn: $("btn-info"), tutorialModal: $("tutorial-modal"), closeTutorialBtn: $("btn-close-tutorial"),
   packCard: $("pack-card"), packBrand: $("pack-brand"), packType: $("pack-type"), packTagline: $("pack-tagline"),
   packLength: $("pack-length"), packFilter: $("pack-filter"), packBurn: $("pack-burn"),
   burnFill: $("burn-fill"), burnPct: $("burn-pct"),
@@ -122,6 +123,22 @@ function showToast(html, ms = 2600) {
   ui.toast.classList.add("show");
   clearTimeout(state.toastTimer);
   state.toastTimer = setTimeout(() => ui.toast.classList.remove("show"), ms);
+}
+function openTutorial() { ui.tutorialModal.classList.add("active"); }
+function closeTutorial() { ui.tutorialModal.classList.remove("active"); }
+function setupTutorial() {
+  if (!ui.infoBtn || !ui.tutorialModal || !ui.closeTutorialBtn) return;
+  ui.infoBtn.addEventListener("click", openTutorial);
+  ui.closeTutorialBtn.addEventListener("click", () => {
+    closeTutorial();
+    try { localStorage.setItem("puffTutorialSeen", "1"); } catch (e) {}
+  });
+  ui.tutorialModal.addEventListener("click", (e) => { if (e.target === ui.tutorialModal) closeTutorial(); });
+  try {
+    if (!localStorage.getItem("puffTutorialSeen")) openTutorial();
+  } catch (e) {
+    openTutorial();
+  }
 }
 function pushHistory(cig, puffs, tossedEarly = false) {
   state.history.unshift({ label: `${cig.brand.name} ${cig.type.name}`, puffs, tossedEarly });
@@ -649,6 +666,7 @@ function loop(now) {
 // Boot
 // ---------------------------------------------------------------------------
 async function boot() {
+  setupTutorial();
   if (DEMO) {
     ui.startBtn.textContent = "Start demo (mouse controls)";
     ui.startBtn.onclick = () => {
