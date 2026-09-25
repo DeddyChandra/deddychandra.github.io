@@ -205,11 +205,11 @@ body {
 }
 
 @media (max-width: 900px) and (orientation: landscape) {
-  .viewport { min-height: auto; height: clamp(220px, 72dvh, 420px); aspect-ratio: auto; }
+  .viewport { min-height: auto; aspect-ratio: 16 / 9; max-height: 75vh; }
 }
 
 @media (max-width: 640px) {
-  #app { padding: 14px 14px 12px; gap: 12px; }
+  #app { padding: 12px 12px 10px; gap: 12px; }
 
   .topbar { flex-wrap: wrap; gap: 10px; align-items: flex-start; }
   .brand { gap: 10px; flex: 1; min-width: 0; }
@@ -219,20 +219,21 @@ body {
   .brand p { font-size: 11px; }
   .back-link { font-size: 12px; padding: 6px 10px; margin-left: auto; }
 
+  /* Landscape-shaped camera that fills the width, not a tall portrait box */
   .viewport {
-    min-height: auto;
-    height: 360px;
-    height: clamp(320px, 58dvh, 480px);
-    aspect-ratio: auto;
+    width: 100%;
+    min-height: 260px;
+    min-height: clamp(260px, 36dvh, 360px);
+    aspect-ratio: 16 / 9;
     border-radius: 14px;
   }
 
-  .overlay-card { padding: 18px 16px; border-radius: 18px; width: min(420px, 92%); }
-  .overlay-icon { width: 92px; height: 12px; margin-bottom: 16px; }
+  .overlay-card { padding: 16px 14px; border-radius: 18px; width: min(420px, 94%); }
+  .overlay-icon { width: 88px; height: 12px; margin-bottom: 14px; }
   .overlay-icon::before { right: -5px; top: 1px; width: 8px; height: 8px; }
-  .overlay-card h2 { font-size: 20px; }
+  .overlay-card h2 { font-size: 18px; }
   .overlay-card p { font-size: 12px; margin-bottom: 12px; }
-  .howto { font-size: 12px; line-height: 1.55; padding-left: 16px; margin-bottom: 16px; }
+  .howto { font-size: 12px; line-height: 1.55; padding-left: 16px; margin-bottom: 14px; }
   .btn-primary { padding: 11px 20px; font-size: 14px; }
   .demo-link { font-size: 11px; }
 
@@ -261,13 +262,13 @@ body {
 }
 
 @media (max-width: 380px) {
-  #app { padding: 12px 12px 10px; }
+  #app { padding: 10px 10px 8px; }
   .brand h1 { font-size: 18px; }
   .brand p { font-size: 10px; }
   .back-link { font-size: 11px; padding: 5px 8px; }
-  .viewport { height: clamp(300px, 56dvh, 440px); }
-  .overlay-card { padding: 16px 14px; }
-  .overlay-card h2 { font-size: 18px; }
+  .viewport { min-height: 240px; min-height: clamp(240px, 34dvh, 320px); }
+  .overlay-card { padding: 14px 12px; }
+  .overlay-card h2 { font-size: 17px; }
   .howto { font-size: 11px; padding-left: 14px; }
   .side section { padding: 12px; }
 }
