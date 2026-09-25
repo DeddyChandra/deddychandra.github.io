@@ -361,8 +361,8 @@ function updateCigarette(dt, now) {
     cig.phase = CIG.PUFFING;
     cig.burn = Math.min(1, cig.burn + dt * 0.11 * cig.type.burn);
     cig.ash = Math.min(0.12, cig.ash + dt * 0.02);
-    const origin = blowPoint() || tipPosition();
-    emitSmoke(origin, 3, cig.type.smoke, 0.7);
+    const origin = blowPoint();
+    if (origin) emitSmoke(origin, 3, cig.type.smoke, 0.7);
     setStatus("puffing", "Taking a drag…");
     if (cig.burn >= 1) finishCigarette();
   } else {
@@ -372,8 +372,7 @@ function updateCigarette(dt, now) {
       cig.burn = Math.min(1, cig.burn + dt * 0.012 * cig.type.burn);
       cig.ash = Math.min(0.12, cig.ash + dt * 0.005);
       if (cig.burn >= 1) finishCigarette();
-      const origin = blowPoint() || tipPosition();
-      emitSmoke(origin, 1, cig.type.smoke, 0.35);
+      emitSmoke(tipPosition(), 1, cig.type.smoke, 0.35);
       if (speed > flickThreshold * 1.3) cig.ash = 0;
     }
     setStatus("holding", "Bring it back to your lips");
@@ -428,10 +427,10 @@ function tipPosition() {
   return { x: cig.pos.x + Math.cos(cig.angle) * remaining, y: cig.pos.y + Math.sin(cig.angle) * remaining };
 }
 
-// Smoke exits through the mouth when it's open, otherwise through the nose.
+// Smoke only exits when the mouth is open. If closed, it stays trapped.
 function blowPoint() {
   if (!state.mouth) return null;
-  return state.mouth.open ? state.mouth : (state.nose || state.mouth);
+  return state.mouth.open ? state.mouth : null;
 }
 
 function throwCigarette(vel) {
@@ -638,8 +637,8 @@ function loop(now) {
   try { updateTracking(now); } catch (e) { console.error(e); }
   updateCigarette(dt, now);
   if (now < state.exhaleUntil && state.mouth) {
-    const origin = blowPoint() || state.mouth;
-    emitSmoke(origin, 2, state.cig.type.smoke, 0.5, { x: 0, y: -30 });
+    const origin = blowPoint();
+    if (origin) emitSmoke(origin, 2, state.cig.type.smoke, 0.5, { x: 0, y: -30 });
   }
   updateParticles(dt);
   draw();
