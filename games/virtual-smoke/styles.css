@@ -198,6 +198,38 @@ body {
   color: var(--accent);
 }
 
+/* Info button + tutorial modal (mobile only) */
+.info-btn {
+  display: none;
+  position: absolute; top: 12px; right: 12px; z-index: 4;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--panel); border: 1px solid var(--panel-border);
+  color: var(--text); font-size: 16px; font-weight: 700; line-height: 1;
+  cursor: pointer; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px); transition: background 0.2s, border-color 0.2s;
+}
+.info-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--accent); }
+
+.modal {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(8, 8, 12, 0.8); backdrop-filter: blur(10px);
+  padding: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal.active { opacity: 1; pointer-events: auto; }
+.modal-card {
+  width: min(420px, 100%); max-height: 80vh; overflow-y: auto;
+  background: rgba(20, 20, 26, 0.95); border: 1px solid var(--panel-border);
+  border-radius: 22px; padding: 24px; position: relative;
+}
+.modal-card h3 { margin: 0 0 16px; font-family: "Playfair Display", serif; font-size: 22px; }
+.modal-close {
+  position: absolute; top: 10px; right: 10px; width: 32px; height: 32px;
+  background: transparent; border: 0; color: var(--muted); font-size: 24px; line-height: 1;
+  cursor: pointer; border-radius: 8px; transition: background 0.2s, color 0.2s;
+}
+.modal-close:hover { background: rgba(255, 255, 255, 0.08); color: var(--text); }
+
 @media (max-width: 900px) {
   .stage { grid-template-columns: 1fr; }
   .stats { display: none; }
@@ -208,7 +240,7 @@ body {
   .viewport { min-height: auto; aspect-ratio: 16 / 9; max-height: 75vh; }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px) and (orientation: portrait) {
   #app { padding: 12px 12px 10px; gap: 12px; }
 
   .topbar { flex-wrap: wrap; gap: 10px; align-items: flex-start; }
@@ -219,14 +251,16 @@ body {
   .brand p { font-size: 11px; }
   .back-link { font-size: 12px; padding: 6px 10px; margin-left: auto; }
 
-  /* Landscape-shaped camera that fills the width, not a tall portrait box */
+  /* Large vertical camera; gesture guide becomes an info popup */
   .viewport {
     width: 100%;
-    min-height: 260px;
-    min-height: clamp(260px, 36dvh, 360px);
-    aspect-ratio: 16 / 9;
+    min-height: 420px;
+    min-height: clamp(420px, 68dvh, 720px);
+    aspect-ratio: 3 / 4;
     border-radius: 14px;
   }
+  .hint-card { display: none; }
+  .info-btn { display: inline-flex; }
 
   .overlay-card { padding: 16px 14px; border-radius: 18px; width: min(420px, 94%); }
   .overlay-icon { width: 88px; height: 12px; margin-bottom: 14px; }
@@ -261,12 +295,12 @@ body {
   .foot { font-size: 11px; }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 380px) and (orientation: portrait) {
   #app { padding: 10px 10px 8px; }
   .brand h1 { font-size: 18px; }
   .brand p { font-size: 10px; }
   .back-link { font-size: 11px; padding: 5px 8px; }
-  .viewport { min-height: 240px; min-height: clamp(240px, 34dvh, 320px); }
+  .viewport { min-height: 400px; min-height: clamp(400px, 64dvh, 620px); }
   .overlay-card { padding: 14px 12px; }
   .overlay-card h2 { font-size: 17px; }
   .howto { font-size: 11px; padding-left: 14px; }
