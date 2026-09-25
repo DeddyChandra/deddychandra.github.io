@@ -188,7 +188,15 @@ body {
 .history li span { color: var(--muted); font-size: 12px; }
 .history .empty { color: var(--muted); font-style: italic; }
 
-.foot { text-align: center; font-size: 12px; color: var(--muted); }
+.foot {
+  text-align: center; font-size: 12px; color: var(--muted);
+  display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.foot .version {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  color: var(--accent);
+}
 
 @media (max-width: 900px) {
   .stage { grid-template-columns: 1fr; }
@@ -197,7 +205,7 @@ body {
 }
 
 @media (max-width: 900px) and (orientation: landscape) {
-  .viewport { min-height: auto; max-height: 82vh; }
+  .viewport { min-height: auto; height: clamp(220px, 72dvh, 420px); aspect-ratio: auto; }
 }
 
 @media (max-width: 640px) {
@@ -212,18 +220,19 @@ body {
   .back-link { font-size: 12px; padding: 6px 10px; margin-left: auto; }
 
   .viewport {
-    min-height: 360px;
-    min-height: clamp(360px, 62dvh, 520px);
-    aspect-ratio: 4 / 3;
+    min-height: auto;
+    height: 360px;
+    height: clamp(320px, 58dvh, 480px);
+    aspect-ratio: auto;
     border-radius: 14px;
   }
 
-  .overlay-card { padding: 20px 18px; border-radius: 18px; width: min(420px, 92%); }
+  .overlay-card { padding: 18px 16px; border-radius: 18px; width: min(420px, 92%); }
   .overlay-icon { width: 92px; height: 12px; margin-bottom: 16px; }
   .overlay-icon::before { right: -5px; top: 1px; width: 8px; height: 8px; }
-  .overlay-card h2 { font-size: 22px; }
-  .overlay-card p { font-size: 13px; margin-bottom: 14px; }
-  .howto { font-size: 13px; line-height: 1.6; padding-left: 18px; margin-bottom: 18px; }
+  .overlay-card h2 { font-size: 20px; }
+  .overlay-card p { font-size: 12px; margin-bottom: 12px; }
+  .howto { font-size: 12px; line-height: 1.55; padding-left: 16px; margin-bottom: 16px; }
   .btn-primary { padding: 11px 20px; font-size: 14px; }
   .demo-link { font-size: 11px; }
 
@@ -249,6 +258,18 @@ body {
   .history li span { font-size: 11px; }
 
   .foot { font-size: 11px; }
+}
+
+@media (max-width: 380px) {
+  #app { padding: 12px 12px 10px; }
+  .brand h1 { font-size: 18px; }
+  .brand p { font-size: 10px; }
+  .back-link { font-size: 11px; padding: 5px 8px; }
+  .viewport { height: clamp(300px, 56dvh, 440px); }
+  .overlay-card { padding: 16px 14px; }
+  .overlay-card h2 { font-size: 18px; }
+  .howto { font-size: 11px; padding-left: 14px; }
+  .side section { padding: 12px; }
 }
 
 .demo-link { display: inline-block; margin-top: 4px; font-size: 12px; color: var(--muted); text-decoration: underline dotted; }
