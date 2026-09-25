@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Puff · Virtual Smoking Simulator</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a3d'/%3E%3Crect x='7' y='14' width='18' height='4' rx='2' fill='%23fff'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark"></span>
+        <div>
+          <h1>Puff</h1>
+          <p>Virtual smoking · gesture controlled</p>
+        </div>
+      </div>
+      <a class="back-link" href="/games/">← Games</a>
+      <div class="stats">
+        <div class="stat"><span id="stat-puffs">0</span><label>puffs</label></div>
+        <div class="stat"><span id="stat-smoked">0</span><label>finished</label></div>
+        <div class="stat"><span id="stat-fps">–</span><label>fps</label></div>
+      </div>
+    </header>
+
+    <main class="stage">
+      <div class="viewport">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="canvas"></canvas>
+
+        <div id="overlay-start" class="overlay">
+          <div class="overlay-card">
+            <div class="overlay-icon"></div>
+            <h2>Light one up</h2>
+            <p>This experience uses your webcam to track your hand and mouth. Nothing is uploaded — everything runs locally in your browser.</p>
+            <ol class="howto">
+              <li><b>Pinch</b> your index finger and thumb together to hold the cigarette.</li>
+              <li><b>Light it</b>: make a fist with your thumb up on your other hand (a lighter) and touch the flame to the tip.</li>
+              <li><b>Bring it to your lips</b> to take a drag. It burns down with every puff.</li>
+              <li><b>Throw it</b> with a quick flick of your hand — any time — and a fresh one is dealt.</li>
+            </ol>
+            <button id="btn-start" class="btn-primary">Enable camera</button>
+            <p id="start-error" class="error"></p>
+            <a class="demo-link" href="?demo">No camera? Try the mouse demo (hold mouse = pinch, hold L = lighter)</a>
+          </div>
+        </div>
+
+        <div id="status" class="status-pill"><span class="dot"></span><span id="status-text">Loading models…</span></div>
+
+        <div id="toast" class="toast"></div>
+      </div>
+
+      <aside class="side">
+        <section class="pack-card" id="pack-card">
+          <div class="pack-top">
+            <span class="pack-label">Now smoking</span>
+            <span class="pack-type" id="pack-type">—</span>
+          </div>
+          <h3 class="pack-brand" id="pack-brand">—</h3>
+          <p class="pack-tagline" id="pack-tagline"></p>
+          <div class="pack-meta">
+            <div><label>Length</label><span id="pack-length">—</span></div>
+            <div><label>Filter</label><span id="pack-filter">—</span></div>
+            <div><label>Burn</label><span id="pack-burn">—</span></div>
+          </div>
+          <div class="burn-track"><div class="burn-fill" id="burn-fill"></div></div>
+          <div class="burn-label"><span id="burn-pct">100%</span> remaining</div>
+        </section>
+
+        <section class="hint-card">
+          <h4>Gesture guide</h4>
+          <ul class="hints">
+            <li id="hint-hold"><span class="hint-key">Pinch</span> Hold the cigarette</li>
+            <li id="hint-light"><span class="hint-key">Lighter</span> Fist + thumb up, touch the tip</li>
+            <li id="hint-puff"><span class="hint-key">To lips</span> Take a drag</li>
+            <li id="hint-flick"><span class="hint-key">Throw</span> Flick to toss it away</li>
+          </ul>
+        </section>
+
+        <section class="history-card">
+          <h4>Recently smoked</h4>
+          <ul id="history" class="history"><li class="empty">Nothing yet.</li></ul>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="foot">A harmless simulation. No real smoke, no real cigarettes.</footer>
+  </div>
+
+  <script>
+    if (location.protocol === "file:") {
+      document.getElementById("start-error").textContent =
+        "Open this page through a local server, not by double-clicking the file. Run: python3 -m http.server 8080  →  http://localhost:8080";
+      document.getElementById("btn-start").disabled = true;
+      document.getElementById("btn-start").textContent = "Needs a local server";
+    } else if (!window.isSecureContext) {
+      document.getElementById("start-error").textContent =
+        "Camera access requires HTTPS or localhost. Open the site via http://localhost or an HTTPS URL.";
+    } else if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      document.getElementById("start-error").textContent = "This browser doesn't support camera access.";
+    }
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

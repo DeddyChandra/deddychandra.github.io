@@ -15,6 +15,7 @@
     "uses": "Uses",
     "lembur": "Lembur",
     "calendar": "Calendar",
+    "games": "Games",
     "resume": "Resume",
     "back": "Back to home"
   },
@@ -241,5 +242,13 @@
     "today_cny": "新年快乐 — it's today!",
     "today_df": "大峰祖师圣诞 — it's today!",
     "how": "<strong>How this works:</strong> dates are derived at page load with <a href=\"https://github.com/6tail/lunar-javascript\" target=\"_blank\" rel=\"noopener\">lunar-javascript</a> — Chinese New Year is <code>lunar 1/1</code>, 大峰祖师圣诞 is <code>lunar 10/29</code>. Nothing is hardcoded, so occurrences that have already passed drop off the list automatically and the next ten always roll forward. Countdowns target <code>00:00 WIB</code> of each date regardless of your device timezone."
+  },
+  "games": {
+    "eyebrow": "// games",
+    "title": "Games",
+    "subtitle": "Small interactive experiments that live in the browser.",
+    "card_title": "Virtual Smoke",
+    "card_desc": "A gesture-controlled virtual smoking simulator that runs entirely in the browser — no install needed.",
+    "card_cta": "Play Virtual Smoke"
   }
 }

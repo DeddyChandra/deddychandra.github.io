@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Now — Deddy Chandra</title>
-  <meta name="description" content="What Deddy Chandra is currently working on, learning, and reading." />
+  <title>Games — Deddy Chandra</title>
+  <meta name="description" content="Small interactive browser experiments and games." />
   <meta name="theme-color" content="#07090f" />
   <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -26,9 +26,9 @@
         <li><a class="nav-link" href="/#about" data-num="01." data-i18n="nav.about">About</a></li>
         <li><a class="nav-link" href="/#work" data-num="03." data-i18n="nav.work">Work</a></li>
         <li><a class="nav-link" href="/#projects" data-num="05." data-i18n="nav.projects">Projects</a></li>
-        <li><a class="nav-link" href="/games/" data-num="·" data-i18n="nav.games">Games</a></li>
+        <li><a class="nav-link active" href="/games/" data-num="·" data-i18n="nav.games">Games</a></li>
         <li><a class="nav-link" href="/blog/" data-num="·" data-i18n="nav.blog">Blog</a></li>
-        <li><a class="nav-link active" href="/now.html" data-num="·" data-i18n="nav.now">Now</a></li>
+        <li><a class="nav-link" href="/now.html" data-num="·" data-i18n="nav.now">Now</a></li>
         <li><a class="nav-link" href="/uses.html" data-num="·" data-i18n="nav.uses">Uses</a></li>
         <li><a class="nav-link" href="/lembur/" data-num="·" data-i18n="nav.lembur">Lembur</a></li>
         <li><a class="nav-link" href="/calendar/" data-num="·" data-i18n="nav.calendar">Calendar</a></li>
@@ -50,23 +50,28 @@
   </nav>
 
   <main class="container-narrow" style="padding-top: 140px; padding-bottom: 80px;">
-    <p class="section-eyebrow">// snapshot</p>
-    <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 12px;" data-i18n="now.title">What I'm doing now</h1>
-    <p class="text-muted" data-i18n="now.subtitle">A snapshot of where my focus is — inspired by /now pages.</p>
-    <p class="mono" style="color: var(--text-faint); font-size: 0.85rem; margin-top: 8px;" data-i18n="now.updated">Last updated: May 2026</p>
+    <p class="section-eyebrow" data-i18n="games.eyebrow">// games</p>
+    <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 12px;" data-i18n="games.title">Games</h1>
+    <p class="text-muted" data-i18n="games.subtitle">Small interactive experiments that live in the browser.</p>
 
-    <div class="prose" style="margin-top: 48px;">
-      <h2 data-i18n="now.s1_t">At work</h2>
-      <p data-i18n="now.s1_d">Shipping the next iteration of corporate travel loan products at Traveloka. Recently focused on improving repayment allocation logic and integrating new insurance providers.</p>
-
-      <h2 data-i18n="now.s2_t">Learning</h2>
-      <p data-i18n="now.s2_d">Going deeper on AWS architecture (Architecting on AWS, 2026), event-driven design with SQS/SNS, and PostgreSQL internals — query planning, indexes, and partitioning.</p>
-
-      <h2 data-i18n="now.s3_t">Reading</h2>
-      <p data-i18n="now.s3_d">Designing Data-Intensive Applications (Kleppmann), and re-reading Database Internals (Petrov).</p>
-
-      <h2 data-i18n="now.s4_t">Side quests</h2>
-      <p data-i18n="now.s4_d">Tinkering with the Bandar Detector orderbook tool, and slowly polishing my KSEI PDF parser.</p>
+    <div class="cases-grid" style="margin-top: 56px;">
+      <a class="case-card reveal" href="/virtual-smoke/">
+        <div class="case-body">
+          <div class="case-meta">
+            <span>SIMULATION · BROWSER</span>
+            <span class="case-meta-dot"></span>
+            <span>2026</span>
+          </div>
+          <h3 class="case-title" data-i18n="games.card_title">Virtual Smoke</h3>
+          <p class="case-summary" data-i18n="games.card_desc">A gesture-controlled virtual smoking simulator that runs entirely in the browser — no install needed.</p>
+          <div class="tag-row">
+            <span class="tag">Webcam</span><span class="tag">Canvas</span><span class="tag">MediaPipe</span>
+          </div>
+          <div style="margin-top: 18px;">
+            <span class="btn btn-primary" data-i18n="games.card_cta">Play Virtual Smoke</span>
+          </div>
+        </div>
+      </a>
     </div>
   </main>
 
