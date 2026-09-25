@@ -15,6 +15,7 @@
     "uses": "装备",
     "lembur": "加班计算",
     "calendar": "农历",
+    "games": "游戏",
     "resume": "简历",
     "back": "返回首页"
   },
@@ -227,5 +228,13 @@
     "today_cny": "新年快乐 — 就是今天!",
     "today_df": "大峰祖师圣诞 — 就是今天!",
     "how": "<strong>实现方式:</strong>日期在页面加载时由 <a href=\"https://github.com/6tail/lunar-javascript\" target=\"_blank\" rel=\"noopener\">lunar-javascript</a> 推算 — 春节为<code>农历正月初一</code>,大峰祖师圣诞为<code>农历十月廿九</code>。没有任何写死的日期,已过去的自动移除,并始终显示未来十次。倒计时目标为各日期的 <code>00:00 WIB</code>,与你设备的时区无关。"
+  },
+  "games": {
+    "eyebrow": "// 游戏",
+    "title": "游戏",
+    "subtitle": "运行在浏览器里的小型互动实验。",
+    "card_title": "Virtual Smoke",
+    "card_desc": "一个完全在浏览器中运行的手势控制虚拟吸烟模拟器 —— 无需安装。",
+    "card_cta": "游玩 Virtual Smoke"
   }
 }

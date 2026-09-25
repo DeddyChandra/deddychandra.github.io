@@ -15,6 +15,7 @@
     "uses": "Tools",
     "lembur": "Lembur",
     "calendar": "Kalender",
+    "games": "Game",
     "resume": "CV",
     "back": "Kembali ke beranda"
   },
@@ -241,5 +242,13 @@
     "today_cny": "新年快乐 — hari ini!",
     "today_df": "大峰祖师圣诞 — hari ini!",
     "how": "<strong>Cara kerjanya:</strong> tanggal dihitung saat halaman dimuat memakai <a href=\"https://github.com/6tail/lunar-javascript\" target=\"_blank\" rel=\"noopener\">lunar-javascript</a> — Imlek adalah <code>lunar 1/1</code>, 大峰祖师圣诞 adalah <code>lunar 10/29</code>. Tidak ada tanggal yang ditulis manual, sehingga tanggal yang sudah lewat otomatis hilang dan sepuluh berikutnya selalu bergulir. Hitung mundur menuju <code>00:00 WIB</code> tiap tanggal, terlepas dari zona waktu perangkatmu."
+  },
+  "games": {
+    "eyebrow": "// game",
+    "title": "Game",
+    "subtitle": "Eksperimen interaktif kecil yang berjalan di browser.",
+    "card_title": "Virtual Smoke",
+    "card_desc": "Simulator merokok virtual berbasis gestur yang berjalan sepenuhnya di browser — tanpa perlu instalasi.",
+    "card_cta": "Mainkan Virtual Smoke"
   }
 }
