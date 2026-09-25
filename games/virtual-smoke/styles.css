@@ -197,7 +197,7 @@ body {
 }
 
 @media (max-width: 900px) and (orientation: landscape) {
-  .viewport { min-height: auto; max-height: 58vh; }
+  .viewport { min-height: auto; max-height: 82vh; }
 }
 
 @media (max-width: 640px) {
@@ -211,7 +211,12 @@ body {
   .brand p { font-size: 11px; }
   .back-link { font-size: 12px; padding: 6px 10px; margin-left: auto; }
 
-  .viewport { min-height: 260px; aspect-ratio: 4 / 3; border-radius: 14px; }
+  .viewport {
+    min-height: 360px;
+    min-height: clamp(360px, 62dvh, 520px);
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+  }
 
   .overlay-card { padding: 20px 18px; border-radius: 18px; width: min(420px, 92%); }
   .overlay-icon { width: 92px; height: 12px; margin-bottom: 16px; }
