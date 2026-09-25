@@ -857,6 +857,17 @@ p { color: var(--text-muted); }
 }
 
 .case-body { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+.games-page { padding-top: 140px; padding-bottom: 80px; }
+.games-page .case-card { color: inherit; min-width: 0; }
+.games-page .case-summary { overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .games-page { padding-top: 104px; padding-bottom: 56px; }
+  .games-page .cases-grid { margin-top: 36px !important; }
+  .games-page .case-body { padding: 20px; }
+  .games-page .case-meta { gap: 8px; flex-wrap: wrap; }
+  .games-page .tag-row { gap: 8px; }
+  .games-page .btn { width: 100%; justify-content: center; }
+}
 .case-meta {
   display: flex;
   align-items: center;
