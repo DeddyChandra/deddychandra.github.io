@@ -62,7 +62,8 @@ const state = {
   hand: null, // { pinch:{x,y}, palm:{x,y}, scale, isPinching, vel:{x,y} }
   lighter: null, // { x, y, scale } thumb tip of the lighter hand
   lightProgress: 0,
-  mouth: null, // { x, y, r }
+  mouth: null, // { x, y, r, open }
+  nose: null, // { x, y }
   cig: null, // current cigarette
   particles: [],
   exhaleUntil: 0,
@@ -192,13 +193,14 @@ const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 // Tracking
 // ---------------------------------------------------------------------------
 const DEMO = new URLSearchParams(location.search).has("demo");
-const demo = { x: 0, y: 0, down: false };
+const demo = { x: 0, y: 0, down: false, mouthOpen: false };
 if (DEMO) {
   canvas.addEventListener("pointermove", (e) => { const r = canvas.getBoundingClientRect(); demo.x = e.clientX - r.left; demo.y = e.clientY - r.top; });
   canvas.addEventListener("pointerdown", () => (demo.down = true));
   window.addEventListener("pointerup", () => (demo.down = false));
   window.addEventListener("keydown", (e) => { if (e.key.toLowerCase() === "l") demo.lighter = true; });
   window.addEventListener("keyup", (e) => { if (e.key.toLowerCase() === "l") demo.lighter = false; });
+  window.addEventListener("keydown", (e) => { if (e.key.toLowerCase() === "m") demo.mouthOpen = !demo.mouthOpen; });
 }
 
 function updateTrackingDemo(now) {
@@ -213,7 +215,8 @@ function updateTrackingDemo(now) {
   const scale = 90;
   const palm = { x: pinch.x + 40, y: pinch.y + 90 };
   state.hand = { pinch, palm, scale, isPinching: demo.down, vel, landmarks: Object.assign(Array(21).fill(pinch), { 4: { x: pinch.x - 8, y: pinch.y }, 8: { x: pinch.x + 8, y: pinch.y } }) };
-  state.mouth = { x: W / 2, y: H * 0.42, r: 34 };
+  state.mouth = { x: W / 2, y: H * 0.42, r: 34, open: demo.mouthOpen };
+  state.nose = { x: W / 2, y: H * 0.38 };
   state.lighter = demo.lighter ? { x: W * 0.75, y: H * 0.7, scale: 90 } : null;
 }
 
@@ -260,14 +263,21 @@ function updateTracking(now) {
   }
   state.lighter = lighterHand ? { x: lighterHand.thumbTip.x, y: lighterHand.thumbTip.y, scale: lighterHand.scale } : null;
 
-  // Mouth
+  // Mouth + nose
   if (fr.faceLandmarks && fr.faceLandmarks.length) {
     const F = fr.faceLandmarks[0];
     const upper = project(F[13]), lower = project(F[14]);
     const left = project(F[61]), right = project(F[291]);
-    state.mouth = { x: (upper.x + lower.x) / 2, y: (upper.y + lower.y) / 2, r: dist(left, right) / 2 };
+    const mouthH = dist(F[13], F[14]);
+    const mouthW = dist(F[61], F[291]);
+    state.mouth = {
+      x: (upper.x + lower.x) / 2, y: (upper.y + lower.y) / 2, r: dist(left, right) / 2,
+      open: mouthW > 0 && mouthH / mouthW > 0.38,
+    };
+    state.nose = project(F[1]);
   } else {
     state.mouth = null;
+    state.nose = null;
   }
 }
 
@@ -351,7 +361,8 @@ function updateCigarette(dt, now) {
     cig.phase = CIG.PUFFING;
     cig.burn = Math.min(1, cig.burn + dt * 0.11 * cig.type.burn);
     cig.ash = Math.min(0.12, cig.ash + dt * 0.02);
-    emitSmoke(tipPosition(), 3, cig.type.smoke, 0.7);
+    const origin = blowPoint() || tipPosition();
+    emitSmoke(origin, 3, cig.type.smoke, 0.7);
     setStatus("puffing", "Taking a drag…");
     if (cig.burn >= 1) finishCigarette();
   } else {
@@ -361,7 +372,8 @@ function updateCigarette(dt, now) {
       cig.burn = Math.min(1, cig.burn + dt * 0.012 * cig.type.burn);
       cig.ash = Math.min(0.12, cig.ash + dt * 0.005);
       if (cig.burn >= 1) finishCigarette();
-      emitSmoke(tipPosition(), 1, cig.type.smoke, 0.35);
+      const origin = blowPoint() || tipPosition();
+      emitSmoke(origin, 1, cig.type.smoke, 0.35);
       if (speed > flickThreshold * 1.3) cig.ash = 0;
     }
     setStatus("holding", "Bring it back to your lips");
@@ -414,6 +426,12 @@ function tipPosition() {
   const cig = state.cig;
   const remaining = cig.len * (1 - cig.burn) + cig.len * 0.25;
   return { x: cig.pos.x + Math.cos(cig.angle) * remaining, y: cig.pos.y + Math.sin(cig.angle) * remaining };
+}
+
+// Smoke exits through the mouth when it's open, otherwise through the nose.
+function blowPoint() {
+  if (!state.mouth) return null;
+  return state.mouth.open ? state.mouth : (state.nose || state.mouth);
 }
 
 function throwCigarette(vel) {
@@ -619,7 +637,10 @@ function loop(now) {
 
   try { updateTracking(now); } catch (e) { console.error(e); }
   updateCigarette(dt, now);
-  if (now < state.exhaleUntil && state.mouth) emitSmoke(state.mouth, 2, state.cig.type.smoke, 0.5, { x: 0, y: -30 });
+  if (now < state.exhaleUntil && state.mouth) {
+    const origin = blowPoint() || state.mouth;
+    emitSmoke(origin, 2, state.cig.type.smoke, 0.5, { x: 0, y: -30 });
+  }
   updateParticles(dt);
   draw();
   requestAnimationFrame(loop);
